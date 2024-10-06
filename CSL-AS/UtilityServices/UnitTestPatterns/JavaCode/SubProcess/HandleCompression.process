@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:Util="java://com.eai.cuf.Util" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:ns3="http://www.tibco.com/pe/EngineTypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx="http://www.westernunion.com/eai/common/cuf.xsd">
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" schemaLocation="/UtilityServices/SharedResources/SchemaDefinitions/Common/RequestHeader.xsd"/>
+    <xsd:import namespace="http://www.westernunion.com/eai/common/cuf.xsd" schemaLocation="/UtilityServices/SharedResources/SchemaDefinitions/Common/CUF.xsd"/>
+    <pd:name>UtilityServices/UnitTestPatterns/JavaCode/SubProcess/HandleCompression.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="Data">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx:Input" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <pfx:MainProcessOutput>
+            <pfx:Output>
+                <xsl:copy-of select="$Map-Data/Output"/>
+            </pfx:Output>
+            <xsl:choose>
+                <xsl:when test="$Compress-Data/Output/IsCompressed = &quot;true&quot; and &#xA;$Decompress-Data/Output/IsDecompressed = &quot;true&quot;">
+                    <pfx:Status>
+                        <xsl:value-of select="0"/>
+                    </pfx:Status>
+                </xsl:when>
+                <xsl:otherwise>
+                    <pfx:Status>
+                        <xsl:value-of select="1"/>
+                    </pfx:Status>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pfx:MainProcessOutput>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:MainProcessOutput"/>
+    <pd:endX>726</pd:endX>
+    <pd:endY>62</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1360003459911</pd:targetNamespace>
+    <pd:activity name="Compress Data">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>299</pd:x>
+        <pd:y>62</pd:y>
+        <config>
+            <processName>/UtilityServices/SharedResources/JavaCode/CompressData.process</processName>
+        </config>
+        <pd:coercions>
+            <pd:coercion xpath="$Start/Data/pfx:Input/*" element="ns:Header"/>
+        </pd:coercions>
+        <pd:inputBindings>
+            <Input>
+                <xsl:copy-of select="$Start/Data/pfx:Input/ns:Header"/>
+                <InputString>
+                    <xsl:value-of select="tib:render-xml($Start/Data/pfx:Input/ns:Header, false(), true())"/>
+                </InputString>
+            </Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Decompress Data">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>448</pd:x>
+        <pd:y>193</pd:y>
+        <config>
+            <processName>/UtilityServices/SharedResources/JavaCode/DecompressData.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <Input>
+                <xsl:copy-of select="$Start/Data/pfx:Input/ns:Header"/>
+                <InputBinary>
+                    <xsl:value-of select="$Compress-Data/Output/OutputBinary"/>
+                </InputBinary>
+            </Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log Compression Result">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>302</pd:x>
+        <pd:y>203</pd:y>
+        <config>
+            <processName>/UtilityServices/Logging/LogMessage.process</processName>
+        </config>
+        <pd:inputBindings>
+            <Input>
+                <ns2:LogRequest>
+                    <xsl:copy-of select="$Start/Data/pfx:Input/ns:Header"/>
+                    <Audit>
+                        <xsl:value-of select="false()"/>
+                    </Audit>
+                </ns2:LogRequest>
+                <ProcessName>
+                    <xsl:value-of select="Util:getProcessName($_processContext/ns3:ProcessContext/ProcessId)"/>
+                </ProcessName>
+                <LogDateTime>
+                    <xsl:value-of select="current-dateTime()"/>
+                </LogDateTime>
+                <Severity>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/COE/LogLevels/GLB_INFO"/>
+                </Severity>
+                <CLELogging>
+                    <xsl:value-of select="false()"/>
+                </CLELogging>
+                <Message>
+                    <xsl:value-of select="&quot;This is the output of the compress data method.&quot;"/>
+                </Message>
+                <pfx:Input>
+                    <xsl:copy-of select="$Compress-Data/Output"/>
+                </pfx:Input>
+            </Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log Decompression Result">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>447</pd:x>
+        <pd:y>71</pd:y>
+        <config>
+            <processName>/UtilityServices/Logging/LogMessage.process</processName>
+        </config>
+        <pd:inputBindings>
+            <Input>
+                <ns2:LogRequest>
+                    <xsl:copy-of select="$Start/Data/pfx:Input/ns:Header"/>
+                    <Audit>
+                        <xsl:value-of select="false()"/>
+                    </Audit>
+                </ns2:LogRequest>
+                <ProcessName>
+                    <xsl:value-of select="Util:getProcessName($_processContext/ns3:ProcessContext/ProcessId)"/>
+                </ProcessName>
+                <LogDateTime>
+                    <xsl:value-of select="current-dateTime()"/>
+                </LogDateTime>
+                <Severity>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/COE/LogLevels/GLB_INFO"/>
+                </Severity>
+                <CLELogging>
+                    <xsl:value-of select="false()"/>
+                </CLELogging>
+                <Message>
+                    <xsl:value-of select="&quot;This is the output of the decompress data method.&quot;"/>
+                </Message>
+                <pfx:Input>
+                    <xsl:copy-of select="$Decompress-Data/Output"/>
+                </pfx:Input>
+            </Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>593</pd:x>
+        <pd:y>63</pd:y>
+        <config>
+            <element>
+                <xsd:element name="Output">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="pfx:Input" minOccurs="0" maxOccurs="unbounded"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <Output>
+                <pfx:Input>
+                    <xsl:copy-of select="$Compress-Data/Output"/>
+                </pfx:Input>
+                <pfx:Input>
+                    <xsl:copy-of select="$Decompress-Data/Output"/>
+                </pfx:Input>
+            </Output>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Compress Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Compress Data</pd:from>
+        <pd:to>Log Compression Result</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Decompress Data</pd:from>
+        <pd:to>Log Decompression Result</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log Compression Result</pd:from>
+        <pd:to>Decompress Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log Decompression Result</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

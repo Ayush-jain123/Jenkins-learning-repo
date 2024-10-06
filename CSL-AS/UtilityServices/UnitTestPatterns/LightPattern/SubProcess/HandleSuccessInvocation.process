@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx="http://www.westernunion.com/eai/common/cuf.xsd">
+    <pd:name>UtilityServices/UnitTestPatterns/LightPattern/SubProcess/HandleSuccessInvocation.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="Data">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx:Input" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <pfx:MainProcessOutput>
+            <pfx:Output>
+                <xsl:copy-of select="$Map-Output-Data/Output"/>
+            </pfx:Output>
+            <pfx:Status>
+                <xsl:value-of select="0"/>
+            </pfx:Status>
+        </pfx:MainProcessOutput>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:MainProcessOutput"/>
+    <pd:endX>515</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1359052665381</pd:targetNamespace>
+    <pd:activity name="Write to Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>256</pd:x>
+        <pd:y>65</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="concat(&quot;This is a success invocation of LightPattern.&quot;, &#xA;if (exists($Start/Data/pfx:Input)) then concat(&quot; Input Data: &#xD;&#xA;&quot;, &#xA;tib:render-xml($Start/Data/pfx:Input, false(), true())) else &quot;&quot;)"/>
+                </message>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map Output Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>380</pd:x>
+        <pd:y>64</pd:y>
+        <config>
+            <element>
+                <xsd:element name="Output">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="message" type="xsd:string"/>
+                            <xsd:element name="status" type="xsd:boolean"/>
+                            <xsd:element name="timeStamp" type="xsd:dateTime"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <Output>
+                <message>
+                    <xsl:value-of select="&quot;This is the output payload example.&quot;"/>
+                </message>
+                <status>
+                    <xsl:value-of select="true()"/>
+                </status>
+                <timeStamp>
+                    <xsl:value-of select="current-dateTime()"/>
+                </timeStamp>
+            </Output>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Write to Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Write to Log</pd:from>
+        <pd:to>Map Output Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Output Data</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

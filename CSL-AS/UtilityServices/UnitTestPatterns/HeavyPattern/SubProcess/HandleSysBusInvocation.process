@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:Util="java://com.eai.cuf.Util" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.tibco.com/pe/EngineTypes" xmlns:pfx2="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:pfx="http://www.westernunion.com/eai/common/cuf.xsd">
+    <pd:name>UtilityServices/UnitTestPatterns/HeavyPattern/SubProcess/HandleSysBusInvocation.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="Data">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx:Input" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>160</pd:startX>
+    <pd:startY>167</pd:startY>
+    <pd:returnBindings>
+        <pfx:MainProcessOutput>
+            <pfx:Status>
+                <xsl:value-of select="0"/>
+            </pfx:Status>
+        </pfx:MainProcessOutput>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:MainProcessOutput"/>
+    <pd:endX>389</pd:endX>
+    <pd:endY>170</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1359052665381</pd:targetNamespace>
+    <pd:activity name="Write to Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>266</pd:x>
+        <pd:y>168</pd:y>
+        <config>
+            <role>User</role>
+            <suppressHeader>false</suppressHeader>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="concat(&quot;This is a system error invocation of LightPattern.&quot;, &#xA;if (exists($Start/Data/pfx:Input)) then concat(&quot; Input Data: &#xD;&#xA;&quot;, &#xA;tib:render-xml($Start/Data/pfx:Input, false(), true())) else &quot;&quot;)"/>
+                </message>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate System Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>268</pd:x>
+        <pd:y>292</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <message>
+                    <xsl:value-of select="&quot;This is example for system error.&quot;"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="&quot;SYS_00003&quot;"/>
+                </messageCode>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate Business Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>267</pd:x>
+        <pd:y>43</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <message>
+                    <xsl:value-of select="&quot;This is example for business error.&quot;"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="&quot;BUS_00003&quot;"/>
+                </messageCode>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Write to Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Write to Log</pd:from>
+        <pd:to>Generate System Error</pd:to>
+        <pd:xpathDescription>Force system error</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>Util:getProperty($_processContext/pfx3:ProcessContext/ProcessId, "RETRYCOUNTER") = 0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Write to Log</pd:from>
+        <pd:to>End</pd:to>
+        <pd:xpathDescription>Will never flow</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>1=2</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Write to Log</pd:from>
+        <pd:to>Generate Business Error</pd:to>
+        <pd:xpathDescription>Force business error</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

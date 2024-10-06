@@ -1,0 +1,29 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<repository xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xmlns = "http://www.tibco.com/xmlns/repo/types/2002">
+	<globalVariables>
+		<globalVariable>
+			<name>MaxSessions</name>
+			<value>5</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1502812449703</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>RetryCount</name>
+			<value>3</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1405727319089</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>SleepBeforeRetryInMs</name>
+			<value>100</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1456944113820</modTime>
+		</globalVariable>
+	</globalVariables>
+</repository>

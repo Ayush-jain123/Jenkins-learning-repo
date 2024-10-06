@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns="http://www.westernunion.com/eai/common/auditRequest.xsd"
+	 xmlns:Common="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd"
+	 xmlns:cuf="http://www.westernunion.com/eai/common/cuf.xsd"
+	 targetNamespace="http://www.westernunion.com/eai/common/auditRequest.xsd"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" schemaLocation="RequestHeader.xsd"/>
+	<xs:import namespace="http://www.westernunion.com/eai/common/cuf.xsd" schemaLocation="CUF.xsd"/>
+	<xs:element name="AuditRequest" type="AuditRequestType"/>
+	<xs:complexType name="AuditRequestType">
+		<xs:sequence>
+			<xs:element ref="Common:Header"/>
+			<xs:element ref="cuf:Input"/>
+			<xs:element name="TimeDuration" type="xs:int" minOccurs="0"/>
+			<xs:element name="ProcessName" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

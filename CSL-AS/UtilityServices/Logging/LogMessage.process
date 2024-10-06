@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:Util="java://com.eai.cuf.Util" xmlns:ns="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.westernunion.com/eai/common/cuf.xsd" xmlns:pfx2="http://www.tibco.com/pe/DeployedVarsType" xmlns:pfx="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd">
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" schemaLocation="/UtilityServices/SharedResources/SchemaDefinitions/Common/LogRequest.xsd"/>
+    <xsd:import namespace="http://www.westernunion.com/eai/common/cuf.xsd" schemaLocation="/UtilityServices/SharedResources/SchemaDefinitions/Common/CUF.xsd"/>
+    <pd:name>UtilityServices/Logging/LogMessage.process</pd:name>
+    <pd:description>Call this process to log the message into the log file and continue processing</pd:description>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="Input">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx:LogRequest"/>
+                    <xsd:element name="ProcessName" type="xsd:string"/>
+                    <xsd:element name="LogDateTime" type="xsd:dateTime"/>
+                    <xsd:element name="Severity" type="xsd:int"/>
+                    <xsd:element name="CLELogging" type="xsd:boolean"/>
+                    <xsd:element name="Message" type="xsd:string"/>
+                    <xsd:element ref="pfx3:Input" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>65</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>899</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables>
+        <Schema>
+            <xsd:element name="Input">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="header" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </Schema>
+    </pd:processVariables>
+    <pd:targetNamespace>http://xmlns.example.com/1357946967025</pd:targetNamespace>
+    <pd:activity name="User Exit">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>147</pd:x>
+        <pd:y>312</pd:y>
+        <config>
+            <processName>/BusinessProcesses/UserExit/LogMessage.process</processName>
+        </config>
+        <pd:inputBindings>
+            <xsl:copy-of select="$Start/Input"/>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Send To CLE Logging">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>897</pd:x>
+        <pd:y>317</pd:y>
+        <config>
+            <processName>/UtilityServices/SendToCLE/SendLog.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <pfx:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$Start/Input/pfx:LogRequest/ns2:Header/ns2:ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <xsl:if test="$Start/Input/pfx:LogRequest/ns2:Header/ns2:ComponentName">
+                        <ns2:ComponentName>
+                            <xsl:value-of select="$Start/Input/pfx:LogRequest/ns2:Header/ns2:ComponentName"/>
+                        </ns2:ComponentName>
+                    </xsl:if>
+                    <xsl:if test="$Start/Input/pfx:LogRequest/ns2:Header/ns2:Hostname">
+                        <ns2:Hostname>
+                            <xsl:value-of select="$Start/Input/pfx:LogRequest/ns2:Header/ns2:Hostname"/>
+                        </ns2:Hostname>
+                    </xsl:if>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="$Start/Input/LogDateTime"/>
+                    </ns2:Timestamp>
+                    <xsl:if test="$Start/Input/pfx:LogRequest/ns2:Header/ns2:TransactionDomain">
+                        <ns2:TransactionDomain>
+                            <xsl:value-of select="$Start/Input/pfx:LogRequest/ns2:Header/ns2:TransactionDomain"/>
+                        </ns2:TransactionDomain>
+                    </xsl:if>
+                    <xsl:if test="$Start/Input/pfx:LogRequest/ns2:Header/ns2:TransactionType">
+                        <ns2:TransactionType>
+                            <xsl:value-of select="$Start/Input/pfx:LogRequest/ns2:Header/ns2:TransactionType"/>
+                        </ns2:TransactionType>
+                    </xsl:if>
+                    <xsl:if test="$Start/Input/pfx:LogRequest/ns2:Header/ns2:TransactionID">
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$Start/Input/pfx:LogRequest/ns2:Header/ns2:TransactionID"/>
+                        </ns2:TransactionID>
+                    </xsl:if>
+                    <xsl:if test="$Start/Input/pfx:LogRequest/ns2:Header/ns2:CorrelationID">
+                        <ns2:CorrelationID>
+                            <xsl:value-of select="$Start/Input/pfx:LogRequest/ns2:Header/ns2:CorrelationID"/>
+                        </ns2:CorrelationID>
+                    </xsl:if>
+                    <xsl:if test="$Start/Input/pfx:LogRequest/ns2:Header/ns2:InterfaceID">
+                        <ns2:InterfaceID>
+                            <xsl:value-of select="$Start/Input/pfx:LogRequest/ns2:Header/ns2:InterfaceID"/>
+                        </ns2:InterfaceID>
+                    </xsl:if>
+                    <xsl:if test="$Start/Input/pfx:LogRequest/ns2:Header/ns2:Filename">
+                        <ns2:Filename>
+                            <xsl:value-of select="$Start/Input/pfx:LogRequest/ns2:Header/ns2:Filename"/>
+                        </ns2:Filename>
+                    </xsl:if>
+                    <ns2:Message>
+                        <xsl:value-of select="substring(tib:if-absent($Start/Input/Message, $Start/Input/pfx:LogRequest/ns2:Header/ns2:Message), 1, 1500)"/>
+                    </ns2:Message>
+                    <xsl:if test="$Start/Input/pfx:LogRequest/ns2:Header/ns2:RenderID">
+                        <ns2:RenderID>
+                            <xsl:value-of select="$Start/Input/pfx:LogRequest/ns2:Header/ns2:RenderID"/>
+                        </ns2:RenderID>
+                    </xsl:if>
+                    <xsl:if test="$Start/Input/pfx:LogRequest/ns2:Header/ns2:DataEncoding">
+                        <ns2:DataEncoding>
+                            <xsl:value-of select="$Start/Input/pfx:LogRequest/ns2:Header/ns2:DataEncoding"/>
+                        </ns2:DataEncoding>
+                    </xsl:if>
+                    <ns2:Transaction>
+                        <xsl:value-of select="tib:if-absent(tib:render-xml($Start/Input/pfx3:Input/*, false(), true()), &#xA;$Start/Input/pfx:LogRequest/ns2:Header/ns2:Transaction)"/>
+                    </ns2:Transaction>
+                    <xsl:copy-of select="$Start/Input/pfx:LogRequest/ns2:Header/ns2:AltKey"/>
+                </ns2:Header>
+                <xsl:if test="$Start/Input/pfx:LogRequest/TimeDuration">
+                    <TimeDuration>
+                        <xsl:value-of select="$Start/Input/pfx:LogRequest/TimeDuration"/>
+                    </TimeDuration>
+                </xsl:if>
+                <xsl:if test="$Start/Input/pfx:LogRequest/Category">
+                    <Category>
+                        <xsl:value-of select="$Start/Input/pfx:LogRequest/Category"/>
+                    </Category>
+                </xsl:if>
+                <xsl:if test="$Start/Input/pfx:LogRequest/Status">
+                    <Status>
+                        <xsl:value-of select="$Start/Input/pfx:LogRequest/Status"/>
+                    </Status>
+                </xsl:if>
+                <xsl:if test="$Start/Input/pfx:LogRequest/FileSize">
+                    <FileSize>
+                        <xsl:value-of select="$Start/Input/pfx:LogRequest/FileSize"/>
+                    </FileSize>
+                </xsl:if>
+                <Audit>
+                    <xsl:value-of select="$Start/Input/pfx:LogRequest/Audit"/>
+                </Audit>
+            </pfx:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:group name="Catch Exception">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>247</pd:x>
+        <pd:y>65</pd:y>
+        <pd:width>471</pd:width>
+        <pd:height>472</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>simpleGroup</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>Check Severity</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Null</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Check Severity</pd:from>
+            <pd:to>Audit</pd:to>
+            <pd:xpathDescription>Audit</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$Start/Input/Severity = $_globalVariables/pfx2:GlobalVariables/COE/LogLevels/GLB_AUDIT</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Check Severity</pd:from>
+            <pd:to>Warn</pd:to>
+            <pd:xpathDescription>Warn</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$Start/Input/Severity = $_globalVariables/pfx2:GlobalVariables/COE/LogLevels/GLB_WARN</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Check Severity</pd:from>
+            <pd:to>Error</pd:to>
+            <pd:xpathDescription>Error</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$Start/Input/Severity = $_globalVariables/pfx2:GlobalVariables/COE/LogLevels/GLB_ERROR</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Check Severity</pd:from>
+            <pd:to>Debug</pd:to>
+            <pd:xpathDescription>Debug</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$Start/Input/Severity = $_globalVariables/pfx2:GlobalVariables/COE/LogLevels/GLB_DEBUG</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Check Severity</pd:from>
+            <pd:to>Info</pd:to>
+            <pd:xpathDescription>Info</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$Start/Input/Severity = $_globalVariables/pfx2:GlobalVariables/COE/LogLevels/GLB_INFO</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Info</pd:from>
+            <pd:to>Null</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Audit</pd:from>
+            <pd:to>Null</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Warn</pd:from>
+            <pd:to>Null</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Debug</pd:from>
+            <pd:to>Null</pd:to>
+            <pd:lineType>One Bend</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Check Severity</pd:from>
+            <pd:to>Monitor</pd:to>
+            <pd:xpathDescription>Monitor</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$Start/Input/Severity = $_globalVariables/pfx2:GlobalVariables/COE/LogLevels/GLB_MONITOR</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Monitor</pd:from>
+            <pd:to>Null</pd:to>
+            <pd:lineType>One Bend</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Error</pd:from>
+            <pd:to>Null</pd:to>
+            <pd:lineType>S-Shaped</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="Check Severity">
+            <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+            <pd:resourceType>ae.activities.null</pd:resourceType>
+            <pd:x>316</pd:x>
+            <pd:y>308</pd:y>
+            <config/>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="Audit">
+            <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+            <pd:resourceType>ae.activities.log</pd:resourceType>
+            <pd:x>476</pd:x>
+            <pd:y>195</pd:y>
+            <config>
+                <role>errorRole</role>
+                <suppressHeader>true</suppressHeader>
+            </config>
+            <pd:inputBindings>
+                <ns:ActivityInput>
+                    <message>
+                        <xsl:value-of select="concat(&quot;EAI-AUDIT | &quot;, $Schema/Input/header, &#xA;if (exists($Start/Input/pfx3:Input/*)) then &#xA;concat(&quot;Input Data: &quot;, tib:render-xml($Start/Input/pfx3:Input/*, false(), true())) else &quot;&quot;)"/>
+                    </message>
+                </ns:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Debug">
+            <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+            <pd:resourceType>ae.activities.log</pd:resourceType>
+            <pd:x>315</pd:x>
+            <pd:y>461</pd:y>
+            <config>
+                <role>debugRole</role>
+                <suppressHeader>true</suppressHeader>
+            </config>
+            <pd:inputBindings>
+                <ns:ActivityInput>
+                    <message>
+                        <xsl:value-of select="concat(&quot;EAI-DEBUG | &quot;, $Schema/Input/header, &#xA;if (exists($Start/Input/pfx3:Input/*)) then &#xA;concat(&quot;Input Data: &quot;, tib:render-xml($Start/Input/pfx3:Input/*, false(), true())) else &quot;&quot;)"/>
+                    </message>
+                </ns:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Error">
+            <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+            <pd:resourceType>ae.activities.log</pd:resourceType>
+            <pd:x>416</pd:x>
+            <pd:y>157</pd:y>
+            <config>
+                <role>errorRole</role>
+                <suppressHeader>true</suppressHeader>
+            </config>
+            <pd:inputBindings>
+                <ns:ActivityInput>
+                    <message>
+                        <xsl:value-of select="concat(&quot;EAI-ERROR | &quot;, $Schema/Input/header, &#xA;if (exists($Start/Input/pfx3:Input/*)) then &#xA;concat(&quot;Input Data: &quot;, tib:render-xml($Start/Input/pfx3:Input/*, false(), true())) else &quot;&quot;)"/>
+                    </message>
+                </ns:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Info">
+            <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+            <pd:resourceType>ae.activities.log</pd:resourceType>
+            <pd:x>490</pd:x>
+            <pd:y>307</pd:y>
+            <config>
+                <role>infoRole</role>
+                <suppressHeader>true</suppressHeader>
+            </config>
+            <pd:inputBindings>
+                <ns:ActivityInput>
+                    <message>
+                        <xsl:value-of select="concat(&quot;EAI-INFO | &quot;, $Schema/Input/header, &#xA;if (exists($Start/Input/pfx3:Input/*)) then &#xA;concat(&quot;Input Data: &quot;, tib:render-xml($Start/Input/pfx3:Input/*, false(), true())) else &quot;&quot;)"/>
+                    </message>
+                </ns:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Warn">
+            <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+            <pd:resourceType>ae.activities.log</pd:resourceType>
+            <pd:x>483</pd:x>
+            <pd:y>399</pd:y>
+            <config>
+                <role>warnRole</role>
+                <suppressHeader>true</suppressHeader>
+            </config>
+            <pd:inputBindings>
+                <ns:ActivityInput>
+                    <message>
+                        <xsl:value-of select="concat(&quot;EAI-WARN | &quot;, $Schema/Input/header, &#xA;if (exists($Start/Input/pfx3:Input/*)) then &#xA;concat(&quot;Input Data: &quot;, tib:render-xml($Start/Input/pfx3:Input/*, false(), true())) else &quot;&quot;)"/>
+                    </message>
+                </ns:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Null">
+            <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+            <pd:resourceType>ae.activities.null</pd:resourceType>
+            <pd:x>640</pd:x>
+            <pd:y>311</pd:y>
+            <config/>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="Monitor">
+            <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+            <pd:resourceType>ae.activities.log</pd:resourceType>
+            <pd:x>316</pd:x>
+            <pd:y>124</pd:y>
+            <config>
+                <role>Monitor</role>
+                <suppressHeader>true</suppressHeader>
+            </config>
+            <pd:inputBindings>
+                <ns:ActivityInput>
+                    <message>
+                        <xsl:value-of select="concat(&quot;EAI-MONITOR | &quot;, $Schema/Input/header, &#xA;if (exists($Start/Input/pfx3:Input/*)) then &#xA;concat(&quot;Input Data: &quot;, tib:render-xml($Start/Input/pfx3:Input/*, false(), true())) else &quot;&quot;)"/>
+                    </message>
+                </ns:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="Unknown Error">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>816</pd:x>
+        <pd:y>223</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Assign">
+        <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+        <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+        <pd:x>148</pd:x>
+        <pd:y>190</pd:y>
+        <config>
+            <variableName>Schema</variableName>
+        </config>
+        <pd:inputBindings>
+            <Input>
+                <header>
+                    <xsl:value-of select="concat(&quot;[&quot;, $Start/Input/LogDateTime, &quot;] - PID: &quot;, $_processContext/ns1:ProcessContext/ProcessId, &quot; - &quot;, &#xA;$Start/Input/ProcessName, &quot; - TransactionID: &quot;, &#xA;$Start/Input/pfx:LogRequest/ns2:Header/ns2:TransactionID, &#xA;if (exists($Start/Input/pfx:LogRequest/ns2:Header/ns2:InterfaceID)) then &#xA;concat(&quot; - InterfaceID: &quot;, $Start/Input/pfx:LogRequest/ns2:Header/ns2:InterfaceID) else &quot;&quot;, &#xA;if (Util:getProperty($_processContext/ns1:ProcessContext/ProcessId, &quot;OBJECTID&quot;) !=-1) then &#xA;concat(&quot; - ObjectID: &quot;, Util:getProperty($_processContext/ns1:ProcessContext/ProcessId, &#xA;&quot;OBJECTID&quot;)) else &quot;&quot;, &quot;&#xD;&#xA;&quot;, &#xA;&quot;Message: &quot;, $Start/Input/Message, &quot;&#xD;&#xA;&quot;)"/>
+                </header>
+            </Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Assign</pd:to>
+        <pd:xpathDescription>Severity &lt;= Log Level</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/Input/Severity &lt;= $_globalVariables/pfx2:GlobalVariables/COE/GLB_ApplicationLogLevel</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Send To CLE Logging</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>User Exit</pd:from>
+        <pd:to>Catch Exception</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch Exception</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch Exception</pd:from>
+        <pd:to>Send To CLE Logging</pd:to>
+        <pd:xpathDescription>CLE Logging</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/Input/CLELogging =  "true"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch Exception</pd:from>
+        <pd:to>Unknown Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Unknown Error</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Assign</pd:from>
+        <pd:to>User Exit</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

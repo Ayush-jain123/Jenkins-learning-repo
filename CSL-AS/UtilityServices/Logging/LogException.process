@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/EngineTypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:pfx2="http://www.westernunion.com/eai/common/cuf.xsd" xmlns:pfx="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd">
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" schemaLocation="/UtilityServices/SharedResources/SchemaDefinitions/Common/RequestHeader.xsd"/>
+    <xsd:import namespace="http://www.westernunion.com/eai/common/cuf.xsd" schemaLocation="/UtilityServices/SharedResources/SchemaDefinitions/Common/CUF.xsd"/>
+    <pd:name>UtilityServices/Logging/LogException.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx2:ErrorSchema"/>
+    <pd:startX>152</pd:startX>
+    <pd:startY>157</pd:startY>
+    <pd:returnBindings>
+        <xsl:copy-of select="$Start/pfx2:ErrorSchema"/>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx2:ErrorSchema"/>
+    <pd:endX>519</pd:endX>
+    <pd:endY>159</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1358197394738</pd:targetNamespace>
+    <pd:activity name="Log Message">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>266</pd:x>
+        <pd:y>158</pd:y>
+        <config>
+            <processName>/UtilityServices/Logging/LogMessage.process</processName>
+        </config>
+        <pd:inputBindings>
+            <Input>
+                <ns2:LogRequest>
+                    <xsl:copy-of select="$Start/pfx2:ErrorSchema/pfx:Header"/>
+                    <Audit>
+                        <xsl:value-of select="true()"/>
+                    </Audit>
+                </ns2:LogRequest>
+                <ProcessName>
+                    <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx2:ProcessName"/>
+                </ProcessName>
+                <LogDateTime>
+                    <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx2:ExceptionDateTime"/>
+                </LogDateTime>
+                <Severity>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/COE/LogLevels/GLB_ERROR"/>
+                </Severity>
+                <CLELogging>
+                    <xsl:value-of select="false()"/>
+                </CLELogging>
+                <Message>
+                    <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx2:ErrorMessage"/>
+                </Message>
+                <pfx2:Input>
+                    <xsl:copy-of select="$Start/pfx2:ErrorSchema/pfx2:ErrorReport"/>
+                </pfx2:Input>
+            </Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="User Exit">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>384</pd:x>
+        <pd:y>159</pd:y>
+        <config>
+            <processName>/BusinessProcesses/UserExit/LogException.process</processName>
+        </config>
+        <pd:inputBindings>
+            <xsl:copy-of select="$Start/pfx2:ErrorSchema"/>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Send to CLE Exception">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>268</pd:x>
+        <pd:y>43</pd:y>
+        <config>
+            <processName>/UtilityServices/SendToCLE/SendException.process</processName>
+        </config>
+        <pd:inputBindings>
+            <pfx3:ExceptionRequest>
+                <pfx:Header>
+                    <pfx:ApplicationID>
+                        <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx:Header/pfx:ApplicationID"/>
+                    </pfx:ApplicationID>
+                    <xsl:if test="$Start/pfx2:ErrorSchema/pfx:Header/pfx:ComponentName">
+                        <pfx:ComponentName>
+                            <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx:Header/pfx:ComponentName"/>
+                        </pfx:ComponentName>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx2:ErrorSchema/pfx:Header/pfx:Hostname">
+                        <pfx:Hostname>
+                            <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx:Header/pfx:Hostname"/>
+                        </pfx:Hostname>
+                    </xsl:if>
+                    <pfx:Timestamp>
+                        <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx:Header/pfx:Timestamp"/>
+                    </pfx:Timestamp>
+                    <xsl:if test="$Start/pfx2:ErrorSchema/pfx:Header/pfx:TransactionDomain">
+                        <pfx:TransactionDomain>
+                            <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx:Header/pfx:TransactionDomain"/>
+                        </pfx:TransactionDomain>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx2:ErrorSchema/pfx:Header/pfx:TransactionType">
+                        <pfx:TransactionType>
+                            <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx:Header/pfx:TransactionType"/>
+                        </pfx:TransactionType>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx2:ErrorSchema/pfx:Header/pfx:TransactionID">
+                        <pfx:TransactionID>
+                            <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx:Header/pfx:TransactionID"/>
+                        </pfx:TransactionID>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx2:ErrorSchema/pfx:Header/pfx:CorrelationID">
+                        <pfx:CorrelationID>
+                            <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx:Header/pfx:CorrelationID"/>
+                        </pfx:CorrelationID>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx2:ErrorSchema/pfx:Header/pfx:InterfaceID">
+                        <pfx:InterfaceID>
+                            <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx:Header/pfx:InterfaceID"/>
+                        </pfx:InterfaceID>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx2:ErrorSchema/pfx:Header/pfx:Filename">
+                        <pfx:Filename>
+                            <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx:Header/pfx:Filename"/>
+                        </pfx:Filename>
+                    </xsl:if>
+                    <pfx:Message>
+                        <xsl:value-of select="substring($Start/pfx2:ErrorSchema/pfx:Header/pfx:Message, 1, 1500)"/>
+                    </pfx:Message>
+                    <xsl:if test="$Start/pfx2:ErrorSchema/pfx:Header/pfx:RenderID">
+                        <pfx:RenderID>
+                            <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx:Header/pfx:RenderID"/>
+                        </pfx:RenderID>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx2:ErrorSchema/pfx:Header/pfx:DataEncoding">
+                        <pfx:DataEncoding>
+                            <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx:Header/pfx:DataEncoding"/>
+                        </pfx:DataEncoding>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx2:ErrorSchema/pfx:Header/pfx:Transaction">
+                        <pfx:Transaction>
+                            <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx:Header/pfx:Transaction"/>
+                        </pfx:Transaction>
+                    </xsl:if>
+                    <xsl:copy-of select="$Start/pfx2:ErrorSchema/pfx:Header/pfx:AltKey"/>
+                </pfx:Header>
+                <ExceptionCode>
+                    <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx2:ErrorReport/pfx2:MsgCode"/>
+                </ExceptionCode>
+                <StackTrace>
+                    <xsl:value-of select="$Start/pfx2:ErrorSchema/pfx2:ErrorReport/pfx2:StackTrace"/>
+                </StackTrace>
+            </pfx3:ExceptionRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Log Message</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log Message</pd:from>
+        <pd:to>User Exit</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log Message</pd:from>
+        <pd:to>Send to CLE Exception</pd:to>
+        <pd:xpathDescription>CLE Logging</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/pfx2:ErrorSchema/pfx2:CLELogging = "true"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Send to CLE Exception</pd:from>
+        <pd:to>User Exit</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>User Exit</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns2="http://www.westernunion.com/eai/common/cuf.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns="http://schemas.tibco.com/bw/plugins/java/5.0/javaExceptions" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd">
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" schemaLocation="/UtilityServices/SharedResources/SchemaDefinitions/Common/RequestHeader.xsd"/>
+    <pd:name>UtilityServices/SharedResources/JavaCode/DecompressData.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="Input">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx:Header"/>
+                    <xsd:element name="InputBinary" type="xsd:base64Binary"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <xsl:choose>
+            <xsl:when test="exists($_error_Decompress-Data)">
+                <Output>
+                    <IsDecompressed>
+                        <xsl:value-of select="false()"/>
+                    </IsDecompressed>
+                    <Message>
+                        <xsl:value-of select="$_error_Decompress-Data/ns:InvocationException/exceptionMessage"/>
+                    </Message>
+                </Output>
+            </xsl:when>
+            <xsl:otherwise>
+                <Output>
+                    <IsDecompressed>
+                        <xsl:value-of select="$Decompress-Data/javaCodeActivityOutput/IsDecompressed"/>
+                    </IsDecompressed>
+                    <xsl:if test="$Decompress-Data/javaCodeActivityOutput/OutputString">
+                        <OutputString>
+                            <xsl:value-of select="$Decompress-Data/javaCodeActivityOutput/OutputString"/>
+                        </OutputString>
+                    </xsl:if>
+                    <Message>
+                        <xsl:value-of select="$Decompress-Data/javaCodeActivityOutput/Message"/>
+                    </Message>
+                </Output>
+            </xsl:otherwise>
+        </xsl:choose>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="Output">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="IsDecompressed" type="xsd:boolean"/>
+                    <xsd:element name="OutputString" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="Message" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>450</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1359960361090</pd:targetNamespace>
+    <pd:activity name="Decompress Data">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>302</pd:x>
+        <pd:y>64</pd:y>
+        <config>
+            <fileName>DecompressDataDecompressData</fileName>
+            <packageName>UtilityServices.SharedResources.JavaCode.DecompressData</packageName>
+            <fullsource>package UtilityServices.SharedResources.JavaCode.DecompressData;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.zip.DataFormatException;
+import java.util.zip.Inflater;
+public class DecompressDataDecompressData{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected byte[] InputBinary = null;
+	protected boolean IsDecompressed = false;
+	protected String OutputString = "";
+	protected String Message = "";
+	public byte[] getInputBinary() {
+		return InputBinary;
+	}
+	public void setInputBinary(byte[] val) {
+		InputBinary = val;
+	}
+	public boolean getIsDecompressed() {
+		return IsDecompressed;
+	}
+	public void setIsDecompressed(boolean val) {
+		IsDecompressed = val;
+	}
+	public String getOutputString() {
+		return OutputString;
+	}
+	public void setOutputString(String val) {
+		OutputString = val;
+	}
+	public String getMessage() {
+		return Message;
+	}
+	public void setMessage(String val) {
+		Message = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public DecompressDataDecompressData() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : byte[] InputBinary
+	Out : boolean IsDecompressed
+	Out : String OutputString
+	Out : String Message
+* Available Variables: DO NOT MODIFY *****/
+
+		String uncompressed = "";
+
+		// Create the decompressor and give it the data to compress
+		Inflater decompressor = new Inflater();
+		decompressor.setInput(InputBinary);
+		try {
+			// Create an expandable byte array to hold the decompressed data
+			ByteArrayOutputStream bos = new ByteArrayOutputStream(InputBinary.length);
+
+			// Decompress the data
+			byte[] buf = new byte[1024];
+			while (!decompressor.finished()) {
+				int count = decompressor.inflate(buf);
+				bos.write(buf, 0, count);
+			}
+			bos.close();
+			uncompressed = new String(bos.toByteArray(), 0, bos.toByteArray().length, "UTF-8");
+			IsDecompressed = true;
+			Message = "Success";
+		} catch (DataFormatException e) {
+			Message = e.toString();
+		} catch (UnsupportedEncodingException e) {
+			Message = e.toString();
+		} catch (IOException e) {
+			Message = e.toString();
+		}
+
+		OutputString = uncompressed;
+	}
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>InputBinary</fieldName>
+                    <fieldType>binary</fieldType>
+                    <fieldRequired>required</fieldRequired>
+                </row>
+            </inputData>
+            <outputData>
+                <row>
+                    <fieldName>IsDecompressed</fieldName>
+                    <fieldType>boolean</fieldType>
+                    <fieldRequired>required</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>OutputString</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>Message</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>required</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>DecompressDataDecompressData</name>
+                    <byteCode>yv66vgAAADMAaQkAGwBECQAbAEUJABsARgkAGwBHCgAcAEgIAEkHAEoKAAcASAoABwBLBwBMCgAKAE0KAAcATgoABwBPCgAKAFAKAAoAUQcAUgoACgBTCABUCgAQAFUIAFYHAFcKABUAWAcAWQoAFwBYBwBaCgAZAFgHAFsHAFwBAAtJbnB1dEJpbmFyeQEAAltCAQAOSXNEZWNvbXByZXNzZWQBAAFaAQAMT3V0cHV0U3RyaW5nAQASTGphdmEvbGFuZy9TdHJpbmc7AQAHTWVzc2FnZQEADmdldElucHV0QmluYXJ5AQAEKClbQgEABENvZGUBAA9MaW5lTnVtYmVyVGFibGUBAA5zZXRJbnB1dEJpbmFyeQEABShbQilWAQARZ2V0SXNEZWNvbXByZXNzZWQBAAMoKVoBABFzZXRJc0RlY29tcHJlc3NlZAEABChaKVYBAA9nZXRPdXRwdXRTdHJpbmcBABQoKUxqYXZhL2xhbmcvU3RyaW5nOwEAD3NldE91dHB1dFN0cmluZwEAFShMamF2YS9sYW5nL1N0cmluZzspVgEACmdldE1lc3NhZ2UBAApzZXRNZXNzYWdlAQAGPGluaXQ+AQADKClWAQAGaW52b2tlAQANU3RhY2tNYXBUYWJsZQcAWwcAUgcASgcATAcAHgcAVwcAWQcAWgEACkV4Y2VwdGlvbnMHAF0BAApTb3VyY2VGaWxlAQAhRGVjb21wcmVzc0RhdGFEZWNvbXByZXNzRGF0YS5qYXZhDAAdAB4MAB8AIAwAIQAiDAAjACIMADQANQEAAAEAFmphdmEvdXRpbC96aXAvSW5mbGF0ZXIMAF4AKQEAHWphdmEvaW8vQnl0ZUFycmF5T3V0cHV0U3RyZWFtDAA0AF8MAGAAKwwAYQBiDABjAGQMAGUANQEAEGphdmEvbGFuZy9TdHJpbmcMAGYAJQEABVVURi04DAA0AGcBAAdTdWNjZXNzAQAhamF2YS91dGlsL3ppcC9EYXRhRm9ybWF0RXhjZXB0aW9uDABoAC8BACRqYXZhL2lvL1Vuc3VwcG9ydGVkRW5jb2RpbmdFeGNlcHRpb24BABNqYXZhL2lvL0lPRXhjZXB0aW9uAQBUVXRpbGl0eVNlcnZpY2VzL1NoYXJlZFJlc291cmNlcy9KYXZhQ29kZS9EZWNvbXByZXNzRGF0YS9EZWNvbXByZXNzRGF0YURlY29tcHJlc3NEYXRhAQAQamF2YS9sYW5nL09iamVjdAEAE2phdmEvbGFuZy9FeGNlcHRpb24BAAhzZXRJbnB1dAEABChJKVYBAAhmaW5pc2hlZAEAB2luZmxhdGUBAAUoW0IpSQEABXdyaXRlAQAHKFtCSUkpVgEABWNsb3NlAQALdG9CeXRlQXJyYXkBABkoW0JJSUxqYXZhL2xhbmcvU3RyaW5nOylWAQAIdG9TdHJpbmcAIQAbABwAAAAEAAQAHQAeAAAABAAfACAAAAAEACEAIgAAAAQAIwAiAAAACgABACQAJQABACYAAAAdAAEAAQAAAAUqtAABsAAAAAEAJwAAAAYAAQAAAA4AAQAoACkAAQAmAAAAIgACAAIAAAAGKiu1AAGxAAAAAQAnAAAACgACAAAAEQAFABIAAQAqACsAAQAmAAAAHQABAAEAAAAFKrQAAqwAAAABACcAAAAGAAEAAAAUAAEALAAtAAEAJgAAACIAAgACAAAABiobtQACsQAAAAEAJwAAAAoAAgAAABcABQAYAAEALgAvAAEAJgAAAB0AAQABAAAABSq0AAOwAAAAAQAnAAAABgABAAAAGgABADAAMQABACYAAAAiAAIAAgAAAAYqK7UAA7EAAAABACcAAAAKAAIAAAAdAAUAHgABADIALwABACYAAAAdAAEAAQAAAAUqtAAEsAAAAAEAJwAAAAYAAQAAACAAAQAzADEAAQAmAAAAIgACAAIAAAAGKiu1AASxAAAAAQAnAAAACgACAAAAIwAFACQAAQA0ADUAAQAmAAAARwACAAEAAAAbKrcABSoBtQABKgO1AAIqEga1AAMqEga1AASxAAAAAQAnAAAAGgAGAAAAJgAEAAkACQAKAA4ACwAUAAwAGgAnAAEANgA1AAIAJgAAAVYABgAGAAAAjxIGTLsAB1m3AAhNLCq0AAG2AAm7AApZKrQAAb63AAtOEQQAvAg6BCy2AAyaABcsGQS2AA02BS0ZBAMVBbYADqf/6C22AA+7ABBZLbYAEQMttgARvhIStwATTCoEtQACKhIUtQAEpwAkTiottgAWtQAEpwAYTiottgAYtQAEpwAMTiottgAatQAEKiu1AAOxAAMAEwBlAGgAFQATAGUAdAAXABMAZQCAABkAAgAnAAAAYgAYAAAAMAADADMACwA0ABMANwAgADoAJwA7AC4APAA2AD0APwA+AEIAPwBGAEAAWgBBAF8AQgBlAEkAaABDAGkARABxAEkAdABFAHUARgB9AEkAgABHAIEASACJAEsAjgBMADcAAAA1AAb/ACcABQcAOAcAOQcAOgcAOwcAPAAAGv8AJQADBwA4BwA5BwA6AAEHAD1LBwA+SwcAPwgAQAAAAAQAAQBBAAEAQgAAAAIAQw==</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <InputBinary>
+                    <xsl:value-of select="$Start/Input/InputBinary"/>
+                </InputBinary>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log Exception">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>303</pd:x>
+        <pd:y>197</pd:y>
+        <config>
+            <processName>/UtilityServices/Logging/LogException.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns2:ErrorSchema>
+                <ns2:ProcessName>
+                    <xsl:value-of select="BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId)"/>
+                </ns2:ProcessName>
+                <ns2:CLELogging>
+                    <xsl:value-of select="false()"/>
+                </ns2:CLELogging>
+                <ns2:ExceptionDateTime>
+                    <xsl:value-of select="current-dateTime()"/>
+                </ns2:ExceptionDateTime>
+                <xsl:copy-of select="$Start/Input/pfx:Header"/>
+                <ns2:ErrorReport>
+                    <ns2:StackTrace>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/StackTrace"/>
+                    </ns2:StackTrace>
+                    <ns2:Msg>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                    </ns2:Msg>
+                    <ns2:FullClass>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/FullClass"/>
+                    </ns2:FullClass>
+                    <ns2:Class>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/Class"/>
+                    </ns2:Class>
+                    <ns2:ProcessStack>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/ProcessStack"/>
+                    </ns2:ProcessStack>
+                    <xsl:if test="$_error/ns1:ErrorReport/MsgCode">
+                        <ns2:MsgCode>
+                            <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                        </ns2:MsgCode>
+                    </xsl:if>
+                    <ns2:Data>
+                        <xsl:copy-of select="$_error/ns1:ErrorReport/Data/*"/>
+                    </ns2:Data>
+                </ns2:ErrorReport>
+                <ns2:ErrorMessage>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                </ns2:ErrorMessage>
+            </ns2:ErrorSchema>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Decompress Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Decompress Data</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Decompress Data</pd:from>
+        <pd:to>Log Exception</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log Exception</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

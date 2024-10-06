@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns2="http://www.westernunion.com/eai/common/cuf.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns="http://schemas.tibco.com/bw/plugins/java/5.0/javaExceptions" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd">
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" schemaLocation="/UtilityServices/SharedResources/SchemaDefinitions/Common/RequestHeader.xsd"/>
+    <pd:name>UtilityServices/SharedResources/JavaCode/ZipFiles.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="Input">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx:Header"/>
+                    <xsd:element name="SourceDirectory" type="xsd:string"/>
+                    <xsd:element name="InputFileName" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="OutputFilePath" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <xsl:choose>
+            <xsl:when test="exists($_error_Zip-Files)">
+                <Output>
+                    <IsZipped>
+                        <xsl:value-of select="false()"/>
+                    </IsZipped>
+                    <Message>
+                        <xsl:value-of select="$_error_Zip-Files/ns:InvocationException/exceptionMessage"/>
+                    </Message>
+                </Output>
+            </xsl:when>
+            <xsl:otherwise>
+                <Output>
+                    <IsZipped>
+                        <xsl:value-of select="$Zip-Files/javaCodeActivityOutput/IsZipped"/>
+                    </IsZipped>
+                    <Message>
+                        <xsl:value-of select="$Zip-Files/javaCodeActivityOutput/Message"/>
+                    </Message>
+                </Output>
+            </xsl:otherwise>
+        </xsl:choose>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="Output">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="IsZipped" type="xsd:boolean"/>
+                    <xsd:element name="Message" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>450</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1359655808902</pd:targetNamespace>
+    <pd:activity name="Zip Files">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>296</pd:x>
+        <pd:y>62</pd:y>
+        <config>
+            <fileName>ZipFilesZipFiles</fileName>
+            <packageName>UtilityServices.SharedResources.JavaCode.ZipFiles</packageName>
+            <fullsource>package UtilityServices.SharedResources.JavaCode.ZipFiles;
+import java.util.*;
+import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+public class ZipFilesZipFiles{
+
+	static final int BUFFER = 2048;
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String SourceDirectory = "";
+	protected String InputFileName = "";
+	protected String OutputFilePath = "";
+	protected boolean IsZipped = false;
+	protected String Message = "";
+	public String getSourceDirectory() {
+		return SourceDirectory;
+	}
+	public void setSourceDirectory(String val) {
+		SourceDirectory = val;
+	}
+	public String getInputFileName() {
+		return InputFileName;
+	}
+	public void setInputFileName(String val) {
+		InputFileName = val;
+	}
+	public String getOutputFilePath() {
+		return OutputFilePath;
+	}
+	public void setOutputFilePath(String val) {
+		OutputFilePath = val;
+	}
+	public boolean getIsZipped() {
+		return IsZipped;
+	}
+	public void setIsZipped(boolean val) {
+		IsZipped = val;
+	}
+	public String getMessage() {
+		return Message;
+	}
+	public void setMessage(String val) {
+		Message = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public ZipFilesZipFiles() {
+	}
+
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String SourceDirectory
+	In  : String InputFileName
+	In  : String OutputFilePath
+	Out : boolean IsZipped
+	Out : String Message
+* Available Variables: DO NOT MODIFY *****/
+		/*
+		 * Available Variables: DO NOT MODIFY In : String SourceDirectory In :
+		 * String InputFileName In : String OutputFilePath Out : boolean
+		 * IsZipped Out : String Message Available Variables: DO NOT MODIFY ****
+		 */
+
+		String directory = null;
+
+		try {
+			BufferedInputStream origin = null;
+			FileOutputStream destination = new FileOutputStream(OutputFilePath);
+			ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(
+					destination));
+			byte data[] = new byte[BUFFER];
+
+			if (SourceDirectory.trim().endsWith("/")
+					|| SourceDirectory.trim().endsWith("\\")) {
+				directory = SourceDirectory.trim();
+			} else {
+				directory = SourceDirectory.trim() + "/";
+			}
+
+			if (InputFileName.isEmpty()) {
+				// get a list of files from current directory
+				File inputFile = new File(SourceDirectory);
+				String files[] = inputFile.list();
+				for (int i = 0; i &lt; files.length; i++) {
+
+					FileInputStream fis = new FileInputStream(directory
+							+ files[i]);
+					origin = new BufferedInputStream(fis, BUFFER);
+					ZipEntry entry = new ZipEntry(files[i]);
+					out.putNextEntry(entry);
+					int count;
+
+					while ((count = origin.read(data, 0, BUFFER)) != -1) {
+						out.write(data, 0, count);
+					}
+					origin.close();
+				}
+			} else {
+				FileInputStream fis = new FileInputStream(directory
+						+ InputFileName);
+				origin = new BufferedInputStream(fis, BUFFER);
+				ZipEntry entry = new ZipEntry(InputFileName);
+				out.putNextEntry(entry);
+				int count;
+
+				while ((count = origin.read(data, 0, BUFFER)) != -1) {
+					out.write(data, 0, count);
+				}
+				origin.close();
+			}
+			out.close();
+
+			IsZipped = true;
+			Message = "Success";
+		} catch (FileNotFoundException e) {
+			Message = e.getMessage();
+			e.printStackTrace();
+		} catch (IOException e) {
+			Message = e.getMessage();
+			e.printStackTrace();
+		}
+	}
+}
+</fullsource>
+            <outputData>
+                <row>
+                    <fieldName>IsZipped</fieldName>
+                    <fieldType>boolean</fieldType>
+                    <fieldRequired>required</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>Message</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>required</fieldRequired>
+                </row>
+            </outputData>
+            <inputData>
+                <row>
+                    <fieldName>SourceDirectory</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>required</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>InputFileName</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>OutputFilePath</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>required</fieldRequired>
+                </row>
+            </inputData>
+            <byteCode>
+                <class>
+                    <name>ZipFilesZipFiles</name>
+                    <byteCode>yv66vgAAADMAmgkALABdCQAsAF4JACwAXwkALABgCQAsAGEKAC0AYggAYwcAZAoACABlBwBmBwBnCgALAGgKAAoAaAoAaQBqCABrCgBpAGwIAG0HAG4KABIAYgoAEgBvCgASAHAKAGkAcQcAcgoAFwBlCgAXAHMHAHQKABoAZQcAdQoAHAB2BwB3CgAeAGUKAAoAeAoAHAB5CgAKAHoKABwAewoACgB7CAB8BwB9CgAmAH4KACYAfwcAgAoAKQB+CgApAH8HAIEHAIIBAAZCVUZGRVIBAAFJAQANQ29uc3RhbnRWYWx1ZQMAAAgAAQAPU291cmNlRGlyZWN0b3J5AQASTGphdmEvbGFuZy9TdHJpbmc7AQANSW5wdXRGaWxlTmFtZQEADk91dHB1dEZpbGVQYXRoAQAISXNaaXBwZWQBAAFaAQAHTWVzc2FnZQEAEmdldFNvdXJjZURpcmVjdG9yeQEAFCgpTGphdmEvbGFuZy9TdHJpbmc7AQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEAEnNldFNvdXJjZURpcmVjdG9yeQEAFShMamF2YS9sYW5nL1N0cmluZzspVgEAEGdldElucHV0RmlsZU5hbWUBABBzZXRJbnB1dEZpbGVOYW1lAQARZ2V0T3V0cHV0RmlsZVBhdGgBABFzZXRPdXRwdXRGaWxlUGF0aAEAC2dldElzWmlwcGVkAQADKClaAQALc2V0SXNaaXBwZWQBAAQoWilWAQAKZ2V0TWVzc2FnZQEACnNldE1lc3NhZ2UBAAY8aW5pdD4BAAMoKVYBAAZpbnZva2UBAA1TdGFja01hcFRhYmxlBwCBBwCDBwB1BwBkBwBmBwCEBwByBwCFBwB0BwB3BwB9BwCAAQAKRXhjZXB0aW9ucwcAhgEAClNvdXJjZUZpbGUBABVaaXBGaWxlc1ppcEZpbGVzLmphdmEMADIAMwwANAAzDAA1ADMMADYANwwAOAAzDABJAEoBAAABABhqYXZhL2lvL0ZpbGVPdXRwdXRTdHJlYW0MAEkAPgEAHWphdmEvdXRpbC96aXAvWmlwT3V0cHV0U3RyZWFtAQAcamF2YS9pby9CdWZmZXJlZE91dHB1dFN0cmVhbQwASQCHBwCDDACIADoBAAEvDACJAIoBAAFcAQAXamF2YS9sYW5nL1N0cmluZ0J1aWxkZXIMAIsAjAwAjQA6DACOAEQBAAxqYXZhL2lvL0ZpbGUMAI8AkAEAF2phdmEvaW8vRmlsZUlucHV0U3RyZWFtAQAbamF2YS9pby9CdWZmZXJlZElucHV0U3RyZWFtDABJAJEBABZqYXZhL3V0aWwvemlwL1ppcEVudHJ5DACSAJMMAJQAlQwAlgCXDACYAEoBAAdTdWNjZXNzAQAdamF2YS9pby9GaWxlTm90Rm91bmRFeGNlcHRpb24MAEcAOgwAmQBKAQATamF2YS9pby9JT0V4Y2VwdGlvbgEAQlV0aWxpdHlTZXJ2aWNlcy9TaGFyZWRSZXNvdXJjZXMvSmF2YUNvZGUvWmlwRmlsZXMvWmlwRmlsZXNaaXBGaWxlcwEAEGphdmEvbGFuZy9PYmplY3QBABBqYXZhL2xhbmcvU3RyaW5nAQACW0IBABNbTGphdmEvbGFuZy9TdHJpbmc7AQATamF2YS9sYW5nL0V4Y2VwdGlvbgEAGShMamF2YS9pby9PdXRwdXRTdHJlYW07KVYBAAR0cmltAQAIZW5kc1dpdGgBABUoTGphdmEvbGFuZy9TdHJpbmc7KVoBAAZhcHBlbmQBAC0oTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvU3RyaW5nQnVpbGRlcjsBAAh0b1N0cmluZwEAB2lzRW1wdHkBAARsaXN0AQAVKClbTGphdmEvbGFuZy9TdHJpbmc7AQAZKExqYXZhL2lvL0lucHV0U3RyZWFtO0kpVgEADHB1dE5leHRFbnRyeQEAGyhMamF2YS91dGlsL3ppcC9aaXBFbnRyeTspVgEABHJlYWQBAAcoW0JJSSlJAQAFd3JpdGUBAAcoW0JJSSlWAQAFY2xvc2UBAA9wcmludFN0YWNrVHJhY2UAIQAsAC0AAAAGABgALgAvAAEAMAAAAAIAMQAEADIAMwAAAAQANAAzAAAABAA1ADMAAAAEADYANwAAAAQAOAAzAAAADAABADkAOgABADsAAAAdAAEAAQAAAAUqtAABsAAAAAEAPAAAAAYAAQAAABgAAQA9AD4AAQA7AAAAIgACAAIAAAAGKiu1AAGxAAAAAQA8AAAACgACAAAAGwAFABwAAQA/ADoAAQA7AAAAHQABAAEAAAAFKrQAArAAAAABADwAAAAGAAEAAAAeAAEAQAA+AAEAOwAAACIAAgACAAAABiortQACsQAAAAEAPAAAAAoAAgAAACEABQAiAAEAQQA6AAEAOwAAAB0AAQABAAAABSq0AAOwAAAAAQA8AAAABgABAAAAJAABAEIAPgABADsAAAAiAAIAAgAAAAYqK7UAA7EAAAABADwAAAAKAAIAAAAnAAUAKAABAEMARAABADsAAAAdAAEAAQAAAAUqtAAErAAAAAEAPAAAAAYAAQAAACoAAQBFAEYAAQA7AAAAIgACAAIAAAAGKhu1AASxAAAAAQA8AAAACgACAAAALQAFAC4AAQBHADoAAQA7AAAAHQABAAEAAAAFKrQABbAAAAABADwAAAAGAAEAAAAwAAEASAA+AAEAOwAAACIAAgACAAAABiortQAFsQAAAAEAPAAAAAoAAgAAADMABQA0AAEASQBKAAEAOwAAAFIAAgABAAAAIiq3AAYqEge1AAEqEge1AAIqEge1AAMqA7UABCoSB7UABbEAAAABADwAAAAeAAcAAAA2AAQAEgAKABMAEAAUABYAFQAbABYAIQA3AAEASwBKAAIAOwAAAs8ABQAMAAABkgFMAU27AAhZKrQAA7cACU67AApZuwALWS23AAy3AA06BBEIALwIOgUqtAABtgAOEg+2ABCaABIqtAABtgAOEhG2ABCZAA4qtAABtgAOTKcAHbsAElm3ABMqtAABtgAOtgAUEg+2ABS2ABVMKrQAArYAFpkAjrsAF1kqtAABtwAYOgYZBrYAGToHAzYIFQgZB76iAGy7ABpZuwASWbcAEyu2ABQZBxUIMrYAFLYAFbcAGzoJuwAcWRkJEQgAtwAdTbsAHlkZBxUIMrcAHzoKGQQZCrYAICwZBQMRCAC2ACFZNgsCnwAQGQQZBQMVC7YAIqf/5Sy2ACOECAGn/5KnAGS7ABpZuwASWbcAEyu2ABQqtAACtgAUtgAVtwAbOga7ABxZGQYRCAC3AB1NuwAeWSq0AAK3AB86BxkEGQe2ACAsGQUDEQgAtgAhWTYIAp8AEBkEGQUDFQi2ACKn/+UstgAjGQS2ACQqBLUABCoSJbUABacAIE0qLLYAJ7UABSy2ACinABBNKiy2ACq1AAUstgArsQACAAIBcQF0ACYAAgFxAYQAKQACADwAAACiACgAAABHAAIASgAEAEsAEABMACEATgAoAFAARgBSAFEAVABrAFcAdQBZAIIAWgCJAFsAlABdALMAXwDAAGAAzgBhANUAZADmAGUA8wBnAPcAWwD9AGkBAABqAR4AbAErAG0BOABuAT8AcQFQAHIBXQB0AWEAdgFmAHgBawB5AXEAgAF0AHoBdQB7AX0AfAGBAIABhAB9AYUAfgGNAH8BkQCBAEwAAABzAA7/AEYABgcATQcATgcATwcAUAcAUQcAUgAAChn+ACAHAFMHAFQB/QBIBwBVBwBW/AAdAf8ACQAGBwBNBwBOBwBPBwBQBwBRBwBSAAAC/QA+BwBVBwBW/AAdAfgAA/8AEgACBwBNBwBOAAEHAFdPBwBYDABZAAAABAABAFoAAQBbAAAAAgBc</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <SourceDirectory>
+                    <xsl:value-of select="$Start/Input/SourceDirectory"/>
+                </SourceDirectory>
+                <xsl:if test="$Start/Input/InputFileName">
+                    <InputFileName>
+                        <xsl:value-of select="$Start/Input/InputFileName"/>
+                    </InputFileName>
+                </xsl:if>
+                <OutputFilePath>
+                    <xsl:value-of select="$Start/Input/OutputFilePath"/>
+                </OutputFilePath>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log Exception">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>298</pd:x>
+        <pd:y>209</pd:y>
+        <config>
+            <processName>/UtilityServices/Logging/LogException.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns2:ErrorSchema>
+                <ns2:ProcessName>
+                    <xsl:value-of select="BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId)"/>
+                </ns2:ProcessName>
+                <ns2:CLELogging>
+                    <xsl:value-of select="false()"/>
+                </ns2:CLELogging>
+                <ns2:ExceptionDateTime>
+                    <xsl:value-of select="current-dateTime()"/>
+                </ns2:ExceptionDateTime>
+                <xsl:copy-of select="$Start/Input/pfx:Header"/>
+                <ns2:ErrorReport>
+                    <ns2:StackTrace>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/StackTrace"/>
+                    </ns2:StackTrace>
+                    <ns2:Msg>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                    </ns2:Msg>
+                    <ns2:FullClass>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/FullClass"/>
+                    </ns2:FullClass>
+                    <ns2:Class>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/Class"/>
+                    </ns2:Class>
+                    <ns2:ProcessStack>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/ProcessStack"/>
+                    </ns2:ProcessStack>
+                    <xsl:if test="$_error/ns1:ErrorReport/MsgCode">
+                        <ns2:MsgCode>
+                            <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                        </ns2:MsgCode>
+                    </xsl:if>
+                    <ns2:Data>
+                        <xsl:copy-of select="$_error/ns1:ErrorReport/Data/*"/>
+                    </ns2:Data>
+                </ns2:ErrorReport>
+                <ns2:ErrorMessage>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                </ns2:ErrorMessage>
+            </ns2:ErrorSchema>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Zip Files</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Zip Files</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Zip Files</pd:from>
+        <pd:to>Log Exception</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log Exception</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

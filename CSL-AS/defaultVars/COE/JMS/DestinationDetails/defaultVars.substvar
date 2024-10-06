@@ -1,0 +1,29 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<repository xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xmlns = "http://www.tibco.com/xmlns/repo/types/2002">
+	<globalVariables>
+		<globalVariable>
+			<name>MIG_Audit</name>
+			<value>WU.DEV.CUF.AUDIT.LOG.TOPIC</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1502457785693</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>MIG_Exception</name>
+			<value>WU.DEV.CUF.EXCEPTION.LOG.QUEUE</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1502457785586</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>MIG_Logging</name>
+			<value>WU.DEV.CUF.TRANSACTION.LOG.QUEUE</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1502457785979</modTime>
+		</globalVariable>
+	</globalVariables>
+</repository>

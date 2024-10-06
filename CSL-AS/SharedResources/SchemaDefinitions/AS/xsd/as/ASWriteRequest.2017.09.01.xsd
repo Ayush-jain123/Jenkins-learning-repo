@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns="urn:wu:ei:cis:csc:core:as:xsd:as:ASWriteRequest.2017.09.01"
+	 targetNamespace="urn:wu:ei:cis:csc:core:as:xsd:as:ASWriteRequest.2017.09.01"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ASWrite">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="TID" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="SpaceName" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="Tuple" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="KeyValuePair" minOccurs="0" maxOccurs="unbounded">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="Key" type="xsd:string" minOccurs="0"/>
+										<xsd:element name="Value" type="xsd:string" minOccurs="0"/>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xs:schema>

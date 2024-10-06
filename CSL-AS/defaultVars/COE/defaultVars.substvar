@@ -1,0 +1,29 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<repository xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xmlns = "http://www.tibco.com/xmlns/repo/types/2002">
+	<globalVariables>
+		<globalVariable>
+			<name>GLB_ApplicationID</name>
+			<value>COEXX001</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1502457785598</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>GLB_ApplicationLogLevel</name>
+			<value>4</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Integer</type>
+			<modTime>1502457785321</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>GLB_StopEngineOnError</name>
+			<value>false</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Boolean</type>
+			<modTime>1502457785956</modTime>
+		</globalVariable>
+	</globalVariables>
+</repository>

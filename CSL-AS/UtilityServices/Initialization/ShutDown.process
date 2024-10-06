@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:Util="java://com.eai.cuf.Util" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <pd:name>UtilityServices/Initialization/ShutDown.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="Input">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="ProcessID" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>504</pd:endX>
+    <pd:endY>63</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables>
+        <InitializeSchema>
+            <xsd:element name="Input">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="IsClean" type="xsd:boolean"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </InitializeSchema>
+    </pd:processVariables>
+    <pd:targetNamespace>http://xmlns.example.com/1358267791115</pd:targetNamespace>
+    <pd:activity name="Cleaning">
+        <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+        <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+        <pd:x>265</pd:x>
+        <pd:y>65</pd:y>
+        <config>
+            <variableName>InitializeSchema</variableName>
+        </config>
+        <pd:inputBindings>
+            <Input>
+                <IsClean>
+                    <xsl:value-of select="Util:cleanProps($Start/Input/ProcessID)"/>
+                </IsClean>
+            </Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="User Exit">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>382</pd:x>
+        <pd:y>64</pd:y>
+        <config>
+            <processName>/BusinessProcesses/UserExit/ShutDown.process</processName>
+        </config>
+        <pd:inputBindings>
+            <xsl:copy-of select="$Start/Input"/>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Cleaning</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Cleaning</pd:from>
+        <pd:to>User Exit</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>User Exit</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

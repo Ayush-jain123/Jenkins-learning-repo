@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Repository:repository xmlns:Repository="http://www.tibco.com/xmlns/repo/types/2002">
+    <enterpriseArchive>
+        <sharedArchive name="Shared Archive">
+            <resourceType>shared.archive.resource</resourceType>
+            <authorProperty>17744414</authorProperty>
+        </sharedArchive>
+        <processArchive name="CSL-AS">
+            <resourceType>process.archive.resource</resourceType>
+            <authorProperty>17744414</authorProperty>
+            <processProperty>/BusinessProcesses/StarterProcess/ASWrite/JMSQueueReceiver_ASWrite.process,/BusinessProcesses/SubProcess/ASWrite/ASWrite.process,/BusinessProcesses/SubProcess/Common/AgentAccountSearch2Space.process,/BusinessProcesses/SubProcess/Common/CityStateListSpace.process,/BusinessProcesses/SubProcess/Common/GVDataSpace.process,/BusinessProcesses/SubProcess/Common/IsoCountriesCurrenciesSpace.process,/BusinessProcesses/SubProcess/Common/QQCCompanySpace.process</processProperty>
+        </processArchive>
+        <versionProperty>6</versionProperty>
+        <authorProperty>17744414</authorProperty>
+        <addServiceSettableGvars>true</addServiceSettableGvars>
+        <name>CSL-AS</name>
+        <designer>
+            <lockedProperties/>
+            <fixedChildren/>
+            <resourceDescriptions/>
+        </designer>
+        <fileLocationProperty>D:\EAR\CSL-AS.ear</fileLocationProperty>
+    </enterpriseArchive>
+</Repository:repository>

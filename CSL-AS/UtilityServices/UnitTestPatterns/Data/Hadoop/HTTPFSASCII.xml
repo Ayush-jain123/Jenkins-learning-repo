@@ -1,0 +1,5 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<Input>
+	<hadoopFilePath>/webhdfs/v1/user/tibco/test.txt</hadoopFilePath>
+	<asciiContent>This is a test of Hadoop HTTPFS</asciiContent>
+</Input>

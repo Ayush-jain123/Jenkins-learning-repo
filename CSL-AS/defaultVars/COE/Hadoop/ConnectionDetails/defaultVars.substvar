@@ -1,0 +1,37 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<repository xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xmlns = "http://www.tibco.com/xmlns/repo/types/2002">
+	<globalVariables>
+		<globalVariable>
+			<name>MIG_HDFSURL</name>
+			<value>hdfs://WUWSW0HD1NN1:8020</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1502457785807</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>MIG_HTTPHost</name>
+			<value>WUWSW0HD1GW1.dev.wuvpdc.com</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1502457785642</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>MIG_HTTPPort</name>
+			<value>14000</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Integer</type>
+			<modTime>1502457785524</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>MIG_UserName</name>
+			<value>tibco</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1502457785657</modTime>
+		</globalVariable>
+	</globalVariables>
+</repository>

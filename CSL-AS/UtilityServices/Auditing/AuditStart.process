@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:ns2="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:Util="java://com.eai.cuf.Util" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/EngineTypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx2="http://www.tibco.com/pe/DeployedVarsType" xmlns:pfx="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd">
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" schemaLocation="/UtilityServices/SharedResources/SchemaDefinitions/Common/LogRequest.xsd"/>
+    <pd:name>UtilityServices/Auditing/AuditStart.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx:LogRequest"/>
+    <pd:startX>104</pd:startX>
+    <pd:startY>191</pd:startY>
+    <pd:returnBindings>
+        <Output>
+            <transactionId>
+                <xsl:value-of select="$Start/pfx:LogRequest/ns1:Header/ns1:TransactionID"/>
+            </transactionId>
+        </Output>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="Output">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="transactionId" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>526</pd:endX>
+    <pd:endY>193</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1357945671166</pd:targetNamespace>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>222</pd:x>
+        <pd:y>191</pd:y>
+        <config>
+            <role>infoRole</role>
+        </config>
+        <pd:inputBindings>
+            <ns2:ActivityInput>
+                <message>
+                    <xsl:value-of select="concat(&quot;[&quot;, current-dateTime(), &quot;] - PID: &quot;, $_processContext/ns:ProcessContext/ProcessId, &quot; - &quot;, &#xA;Util:getProcessName($_processContext/ns:ProcessContext/ProcessId), &quot; - TransactionID: &quot;, &#xA;$Start/pfx:LogRequest/ns1:Header/ns1:TransactionID, &#xA;if (exists($Start/pfx:LogRequest/ns1:Header/ns1:InterfaceID)) then &#xA;concat(&quot; - InterfaceID: &quot;, $Start/pfx:LogRequest/ns1:Header/ns1:InterfaceID) else &quot;&quot;, &#xA;if (Util:getProperty($_processContext/ns:ProcessContext/ProcessId, &quot;OBJECTID&quot;) !=-1) then &#xA;concat(&quot; - ObjectID: &quot;, Util:getProperty($_processContext/ns:ProcessContext/ProcessId, &#xA;&quot;OBJECTID&quot;)) else &quot;&quot;, &quot; started successfully.&quot;)"/>
+                </message>
+            </ns2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Send To CLE Logging">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>225</pd:x>
+        <pd:y>43</pd:y>
+        <config>
+            <processName>/UtilityServices/SendToCLE/SendLog.process</processName>
+        </config>
+        <pd:inputBindings>
+            <pfx:LogRequest>
+                <ns1:Header>
+                    <ns1:ApplicationID>
+                        <xsl:value-of select="$Start/pfx:LogRequest/ns1:Header/ns1:ApplicationID"/>
+                    </ns1:ApplicationID>
+                    <xsl:if test="$Start/pfx:LogRequest/ns1:Header/ns1:ComponentName">
+                        <ns1:ComponentName>
+                            <xsl:value-of select="$Start/pfx:LogRequest/ns1:Header/ns1:ComponentName"/>
+                        </ns1:ComponentName>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx:LogRequest/ns1:Header/ns1:Hostname">
+                        <ns1:Hostname>
+                            <xsl:value-of select="$Start/pfx:LogRequest/ns1:Header/ns1:Hostname"/>
+                        </ns1:Hostname>
+                    </xsl:if>
+                    <ns1:Timestamp>
+                        <xsl:value-of select="$Start/pfx:LogRequest/ns1:Header/ns1:Timestamp"/>
+                    </ns1:Timestamp>
+                    <xsl:if test="$Start/pfx:LogRequest/ns1:Header/ns1:TransactionDomain">
+                        <ns1:TransactionDomain>
+                            <xsl:value-of select="$Start/pfx:LogRequest/ns1:Header/ns1:TransactionDomain"/>
+                        </ns1:TransactionDomain>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx:LogRequest/ns1:Header/ns1:TransactionType">
+                        <ns1:TransactionType>
+                            <xsl:value-of select="$Start/pfx:LogRequest/ns1:Header/ns1:TransactionType"/>
+                        </ns1:TransactionType>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx:LogRequest/ns1:Header/ns1:TransactionID">
+                        <ns1:TransactionID>
+                            <xsl:value-of select="$Start/pfx:LogRequest/ns1:Header/ns1:TransactionID"/>
+                        </ns1:TransactionID>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx:LogRequest/ns1:Header/ns1:CorrelationID">
+                        <ns1:CorrelationID>
+                            <xsl:value-of select="$Start/pfx:LogRequest/ns1:Header/ns1:CorrelationID"/>
+                        </ns1:CorrelationID>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx:LogRequest/ns1:Header/ns1:InterfaceID">
+                        <ns1:InterfaceID>
+                            <xsl:value-of select="$Start/pfx:LogRequest/ns1:Header/ns1:InterfaceID"/>
+                        </ns1:InterfaceID>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx:LogRequest/ns1:Header/ns1:Filename">
+                        <ns1:Filename>
+                            <xsl:value-of select="$Start/pfx:LogRequest/ns1:Header/ns1:Filename"/>
+                        </ns1:Filename>
+                    </xsl:if>
+                    <ns1:Message>
+                        <xsl:value-of select="concat(&quot;[&quot;, current-dateTime(), &quot;] - PID: &quot;, $_processContext/ns:ProcessContext/ProcessId, &quot; - &quot;, &#xA;Util:getProcessName($_processContext/ns:ProcessContext/ProcessId), &quot; - Environment: &quot;, &#xA;$_globalVariables/pfx2:GlobalVariables/MIG_Env, &quot; - TransactionID: &quot;, &#xA;$Start/pfx:LogRequest/ns1:Header/ns1:TransactionID, &#xA;if (exists($Start/pfx:LogRequest/ns1:Header/ns1:InterfaceID)) then &#xA;concat(&quot; - InterfaceID: &quot;, $Start/pfx:LogRequest/ns1:Header/ns1:InterfaceID) else &quot;&quot;, &quot; started successfully.&quot;)"/>
+                    </ns1:Message>
+                    <xsl:if test="$Start/pfx:LogRequest/ns1:Header/ns1:RenderID">
+                        <ns1:RenderID>
+                            <xsl:value-of select="$Start/pfx:LogRequest/ns1:Header/ns1:RenderID"/>
+                        </ns1:RenderID>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx:LogRequest/ns1:Header/ns1:DataEncoding">
+                        <ns1:DataEncoding>
+                            <xsl:value-of select="$Start/pfx:LogRequest/ns1:Header/ns1:DataEncoding"/>
+                        </ns1:DataEncoding>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx:LogRequest/ns1:Header/ns1:Transaction">
+                        <ns1:Transaction>
+                            <xsl:value-of select="$Start/pfx:LogRequest/ns1:Header/ns1:Transaction"/>
+                        </ns1:Transaction>
+                    </xsl:if>
+                    <xsl:copy-of select="$Start/pfx:LogRequest/ns1:Header/ns1:AltKey"/>
+                </ns1:Header>
+                <xsl:if test="$Start/pfx:LogRequest/TimeDuration">
+                    <TimeDuration>
+                        <xsl:value-of select="$Start/pfx:LogRequest/TimeDuration"/>
+                    </TimeDuration>
+                </xsl:if>
+                <xsl:if test="$Start/pfx:LogRequest/Category">
+                    <Category>
+                        <xsl:value-of select="$Start/pfx:LogRequest/Category"/>
+                    </Category>
+                </xsl:if>
+                <xsl:if test="$Start/pfx:LogRequest/Status">
+                    <Status>
+                        <xsl:value-of select="$Start/pfx:LogRequest/Status"/>
+                    </Status>
+                </xsl:if>
+                <xsl:if test="$Start/pfx:LogRequest/FileSize">
+                    <FileSize>
+                        <xsl:value-of select="$Start/pfx:LogRequest/FileSize"/>
+                    </FileSize>
+                </xsl:if>
+                <Audit>
+                    <xsl:value-of select="$Start/pfx:LogRequest/Audit"/>
+                </Audit>
+            </pfx:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="User Exit">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>378</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/BusinessProcesses/UserExit/AuditStart.process</processName>
+        </config>
+        <pd:inputBindings>
+            <xsl:copy-of select="$Start/pfx:LogRequest"/>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Set Properties">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>378</pd:x>
+        <pd:y>193</pd:y>
+        <config>
+            <element>
+                <xsd:element name="Properties">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="isTransactionIdSet" type="xsd:boolean"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <Properties>
+                <isTransactionIdSet>
+                    <xsl:value-of select="Util:setProperty($_processContext/ns:ProcessContext/ProcessId, &quot;TRANSACTIONID&quot;, &#xA;$Start/pfx:LogRequest/ns1:Header/ns1:TransactionID)"/>
+                </isTransactionIdSet>
+            </Properties>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>Send To CLE Logging</pd:to>
+        <pd:xpathDescription>Audit</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$_globalVariables/pfx2:GlobalVariables/COE/Auditing/GLB_CLELogging = "true"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Send To CLE Logging</pd:from>
+        <pd:to>User Exit</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>User Exit</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>User Exit</pd:from>
+        <pd:to>Set Properties</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Set Properties</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

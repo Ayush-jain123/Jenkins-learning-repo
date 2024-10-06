@@ -1,0 +1,45 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<repository xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xmlns = "http://www.tibco.com/xmlns/repo/types/2002">
+	<globalVariables>
+		<globalVariable>
+			<name>EMS_Password</name>
+			<value>#!y+Rmo5nl+wKbbn4Pph6zjAvznPLvqiCh</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Password</type>
+			<modTime>1406228766993</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>EMS_UserName</name>
+			<value>cslUser</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1406228478694</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>JNDI_ContextUrl</name>
+			<value>tibjmsnaming://10.17.193.24:7200</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1406228082499</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>JNDI_Password</name>
+			<value>#!ofA+zKXMp3CDxLJ4c0vPAULHkBU/mJe0</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Password</type>
+			<modTime>1406228767383</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>JNDI_UserName</name>
+			<value>cslUser</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1406228479411</modTime>
+		</globalVariable>
+	</globalVariables>
+</repository>

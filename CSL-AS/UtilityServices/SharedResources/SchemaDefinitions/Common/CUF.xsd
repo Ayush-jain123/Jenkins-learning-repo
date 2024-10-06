@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns:cuf="http://www.westernunion.com/eai/common/cuf.xsd"
+	 xmlns:hdr="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd"
+	 targetNamespace="http://www.westernunion.com/eai/common/cuf.xsd"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" schemaLocation="RequestHeader.xsd"/>
+	<xs:element name="MainProcessInput">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="hdr:Header"/>
+				<xs:element name="AuditInputMsg" type="xs:boolean"/>
+				<xs:element name="AuditOutputMsg" type="xs:boolean"/>
+				<xs:element ref="cuf:Input" minOccurs="0"/>
+				<xs:element name="ActualProcess" type="xs:string"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="MainProcessOutput">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Output" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:any namespace="##any" processContents="skip" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Status" type="xs:string"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="input">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="skip" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Input" type="cuf:input"/>
+	<xs:element name="ErrorReport">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="StackTrace" type="xs:string"/>
+				<xs:element name="Msg" type="xs:string"/>
+				<xs:element name="FullClass" type="xs:string"/>
+				<xs:element name="Class" type="xs:string"/>
+				<xs:element name="ProcessStack" type="xs:string"/>
+				<xs:element name="MsgCode" type="xs:string" minOccurs="0"/>
+				<xs:element name="Data" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:any namespace="##any" processContents="skip" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="errorSchemaType">
+		<xs:sequence>
+			<xs:element name="ProcessName" type="xs:string"/>
+			<xs:element name="CLELogging" type="xs:boolean"/>
+			<xs:element name="ExceptionDateTime" type="xs:dateTime"/>
+			<xs:element ref="hdr:Header"/>
+			<xs:element ref="cuf:ErrorReport"/>
+			<xs:element name="ErrorMessage" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="ErrorSchema" type="cuf:errorSchemaType"/>
+</xs:schema>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BWSharedResource>
+    <name>JMS Connection</name>
+    <resourceType>ae.shared.JMSConnectionKey</resourceType>
+    <config>
+        <NamingEnvironment>
+            <UseJNDI>true</UseJNDI>
+            <ProviderURL>tcp://localhost:7222</ProviderURL>
+            <NamingURL>%%CSL-AS/Connections/JMS/ConnectionDetails/JNDI_ContextUrl%%</NamingURL>
+            <NamingInitialContextFactory>com.tibco.tibjms.naming.TibjmsInitialContextFactory</NamingInitialContextFactory>
+            <TopicFactoryName>TopicConnectionFactory</TopicFactoryName>
+            <QueueFactoryName>QueueConnectionFactory</QueueFactoryName>
+            <NamingPrincipal>%%CSL-AS/Connections/JMS/ConnectionDetails/JNDI_UserName%%</NamingPrincipal>
+            <NamingCredential>%%CSL-AS/Connections/JMS/ConnectionDetails/JNDI_Password%%</NamingCredential>
+        </NamingEnvironment>
+        <ConnectionAttributes>
+            <username>%%CSL-AS/Connections/JMS/ConnectionDetails/EMS_UserName%%</username>
+            <password>%%CSL-AS/Connections/JMS/ConnectionDetails/EMS_Password%%</password>
+            <clientID/>
+            <autoGenClientID>true</autoGenClientID>
+        </ConnectionAttributes>
+        <UseXACF>false</UseXACF>
+    </config>
+</BWSharedResource>

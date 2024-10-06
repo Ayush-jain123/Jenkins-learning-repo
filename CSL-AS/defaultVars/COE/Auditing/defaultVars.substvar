@@ -1,0 +1,45 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<repository xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xmlns = "http://www.tibco.com/xmlns/repo/types/2002">
+	<globalVariables>
+		<globalVariable>
+			<name>GLB_AuditEnd</name>
+			<value>true</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Boolean</type>
+			<modTime>1502457785709</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>GLB_AuditStart</name>
+			<value>true</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Boolean</type>
+			<modTime>1502457785534</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>GLB_CLELogging</name>
+			<value>true</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Boolean</type>
+			<modTime>1502457785505</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>GLB_InputPayload</name>
+			<value>true</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Boolean</type>
+			<modTime>1502457785790</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>GLB_OutputPayload</name>
+			<value>true</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Boolean</type>
+			<modTime>1502457785416</modTime>
+		</globalVariable>
+	</globalVariables>
+</repository>

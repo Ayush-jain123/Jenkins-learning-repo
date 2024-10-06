@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlPfx="urn:wu:ei:cis:csc:core:das:wsdl:DAS-v1" xmlns:ns5="urn:wu:ei:cis:csc:core:das:xsd:wu:Operator.2013.12.15" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns31="urn:wu:ei:cis:csc:core:das:wsdl:DAS-v1.0.0" xmlns:ns13="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns7="urn:wu:ei:cis:csc:core:das:xsd:wu:Error.2013.12.15" xmlns:pfx="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:ns11="urn:wu:ei:cis:csc:core:das:xsd:das:AgentAccountSuppyItemsRequest.2013.12.15" xmlns:ns8="urn:wu:ei:cis:csc:core:das:xsd:wu:FaultErrorMessage.2013.12.15" xmlns:ns2="http://www.tibco.com/pe/DeployedVarsType" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="urn:wu:ei:cis:csc:core:das:xsd:wu:Channel.2013.12.15" xmlns:ns3="http://www.westernunion.com/eai/common/cuf.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx4="urn:wu:ei:cis:csc:core:as:xsd:as:ASWriteRequest.2017.09.01" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.tibco.com/schemas/CSL-AS/SharedResources/SchemaDefinitions/Custom/Schema.xsd" xmlns:pfx2="urn:wu:ei:cis:csc:core:das:xsd:das:AgentAccountSuppyItemsResponse.2013.12.15">
+    <xsd:import namespace="urn:wu:ei:cis:csc:core:as:xsd:as:ASWriteRequest.2017.09.01" schemaLocation="/SharedResources/SchemaDefinitions/AS/xsd/as/ASWriteRequest.2017.09.01.xsd"/>
+    <pd:name>BusinessProcesses/StarterProcess/ASWrite/JMSQueueReceiver_ASWrite.process</pd:name>
+    <pd:startName>JMS Queue Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="JMS Queue Receiver">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>161</pd:x>
+        <pd:y>92</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>2</acknowledgeMode>
+                <maxSessions>%%CSL-AS/Connections/JMS/MaxSessions%%</maxSessions>
+                <destination>%%CSL-AS/Connections/JMS/DestinationDetails/WriteToASQueue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/SharedResources/Connections/JMS/JMS Connection.sharedjmscon</ConnectionReference>
+            <OutDataxsdString ref="pfx4:ASWrite"/>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>693</pd:endX>
+    <pd:endY>225</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1502473244010</pd:targetNamespace>
+    <pd:activity name="CallProcess_ASWrite">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>374</pd:x>
+        <pd:y>91</pd:y>
+        <config>
+            <processName>/UtilityServices/Patterns/LightPattern/MainProcess.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns3:MainProcessInput>
+                <pfx:Header>
+                    <pfx:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/COE/GLB_ApplicationID"/>
+                    </pfx:ApplicationID>
+                    <pfx:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </pfx:Timestamp>
+                    <pfx:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/pfx4:ASWrite/pfx4:TID"/>
+                    </pfx:TransactionID>
+                    <pfx:Transaction>
+                        <xsl:value-of select="tib:render-xml($JMS-Queue-Receiver/ns:ActivityOutput/Body/pfx4:ASWrite)"/>
+                    </pfx:Transaction>
+                </pfx:Header>
+                <ns3:AuditInputMsg>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/COE/Auditing/GLB_InputPayload"/>
+                </ns3:AuditInputMsg>
+                <ns3:AuditOutputMsg>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/COE/Auditing/GLB_OutputPayload"/>
+                </ns3:AuditOutputMsg>
+                <ns3:Input>
+                    <xsl:copy-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/pfx4:ASWrite"/>
+                </ns3:Input>
+                <ns3:ActualProcess>
+                    <xsl:value-of select="'/BusinessProcesses/SubProcess/ASWrite/ASWrite.process'"/>
+                </ns3:ActualProcess>
+            </ns3:MainProcessInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Confirm">
+        <pd:type>com.tibco.pe.core.ConfirmActivity</pd:type>
+        <pd:resourceType>activity.confirm</pd:resourceType>
+        <pd:x>548</pd:x>
+        <pd:y>93</pd:y>
+        <config>
+            <ConfirmEvent>JMS Queue Receiver</ConfirmEvent>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="CatchAll_Exception">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>541</pd:x>
+        <pd:y>375</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="LogException_Process">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>692</pd:x>
+        <pd:y>377</pd:y>
+        <config>
+            <spawn>true</spawn>
+            <processName>/UtilityServices/Logging/LogException.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns3:ErrorSchema>
+                <ns3:ProcessName>
+                    <xsl:value-of select="$_processContext/ns1:ProcessContext/ProcessId"/>
+                </ns3:ProcessName>
+                <ns3:CLELogging>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/COE/Auditing/GLB_CLELogging"/>
+                </ns3:CLELogging>
+                <ns3:ExceptionDateTime>
+                    <xsl:value-of select="current-dateTime()"/>
+                </ns3:ExceptionDateTime>
+                <pfx:Header>
+                    <pfx:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/COE/GLB_ApplicationID"/>
+                    </pfx:ApplicationID>
+                    <pfx:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </pfx:Timestamp>
+                    <pfx:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/pfx4:ASWrite/pfx4:TID"/>
+                    </pfx:TransactionID>
+                </pfx:Header>
+                <ns3:ErrorReport>
+                    <ns3:StackTrace>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/StackTrace"/>
+                    </ns3:StackTrace>
+                    <ns3:Msg>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                    </ns3:Msg>
+                    <ns3:FullClass>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/FullClass"/>
+                    </ns3:FullClass>
+                    <ns3:Class>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/Class"/>
+                    </ns3:Class>
+                    <ns3:ProcessStack>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/ProcessStack"/>
+                    </ns3:ProcessStack>
+                    <ns3:Data>
+                        <xsl:copy-of select="$_error/ns1:ErrorReport/Data/*"/>
+                    </ns3:Data>
+                </ns3:ErrorReport>
+                <ns3:ErrorMessage>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                </ns3:ErrorMessage>
+            </ns3:ErrorSchema>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SubProcess_LogRequest-Success">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>691</pd:x>
+        <pd:y>93</pd:y>
+        <config>
+            <processName>/UtilityServices/Logging/LogMessage.process</processName>
+            <spawn>true</spawn>
+        </config>
+        <pd:inputBindings>
+            <Input>
+                <ns12:LogRequest>
+                    <pfx:Header>
+                        <pfx:ApplicationID>
+                            <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/COE/GLB_ApplicationID"/>
+                        </pfx:ApplicationID>
+                        <pfx:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </pfx:Timestamp>
+                        <pfx:TransactionID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/pfx4:ASWrite/pfx4:TID"/>
+                        </pfx:TransactionID>
+                    </pfx:Header>
+                    <Audit>
+                        <xsl:value-of select="true()"/>
+                    </Audit>
+                </ns12:LogRequest>
+                <ProcessName>
+                    <xsl:value-of select="BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId)"/>
+                </ProcessName>
+                <LogDateTime>
+                    <xsl:value-of select="current-dateTime()"/>
+                </LogDateTime>
+                <Severity>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/COE/LogLevels/GLB_INFO"/>
+                </Severity>
+                <CLELogging>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/COE/Auditing/GLB_CLELogging"/>
+                </CLELogging>
+                <Message>
+                    <xsl:value-of select="concat(&quot;AS Write Successful for TID &quot;,$JMS-Queue-Receiver/ns:ActivityOutput/Body/pfx4:ASWrite/pfx4:TID)"/>
+                </Message>
+            </Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SubProcess_LogRequest-Fail">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>375</pd:x>
+        <pd:y>228</pd:y>
+        <config>
+            <processName>/UtilityServices/Logging/LogMessage.process</processName>
+            <spawn>true</spawn>
+        </config>
+        <pd:inputBindings>
+            <Input>
+                <ns12:LogRequest>
+                    <pfx:Header>
+                        <pfx:ApplicationID>
+                            <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/COE/GLB_ApplicationID"/>
+                        </pfx:ApplicationID>
+                        <pfx:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </pfx:Timestamp>
+                        <pfx:TransactionID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/pfx4:ASWrite/pfx4:TID"/>
+                        </pfx:TransactionID>
+                    </pfx:Header>
+                    <Audit>
+                        <xsl:value-of select="true()"/>
+                    </Audit>
+                </ns12:LogRequest>
+                <ProcessName>
+                    <xsl:value-of select="BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId)"/>
+                </ProcessName>
+                <LogDateTime>
+                    <xsl:value-of select="current-dateTime()"/>
+                </LogDateTime>
+                <Severity>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/COE/LogLevels/GLB_INFO"/>
+                </Severity>
+                <CLELogging>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/COE/Auditing/GLB_CLELogging"/>
+                </CLELogging>
+                <Message>
+                    <xsl:value-of select="concat(&quot;AS Write FAIL for TID &quot;,$JMS-Queue-Receiver/ns:ActivityOutput/Body/pfx4:ASWrite/pfx4:TID)"/>
+                </Message>
+            </Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Confirm_Error">
+        <pd:type>com.tibco.pe.core.ConfirmActivity</pd:type>
+        <pd:resourceType>activity.confirm</pd:resourceType>
+        <pd:x>562</pd:x>
+        <pd:y>227</pd:y>
+        <config>
+            <ConfirmEvent>JMS Queue Receiver</ConfirmEvent>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>CallProcess_ASWrite</pd:from>
+        <pd:to>Confirm</pd:to>
+        <pd:xpathDescription>success</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$CallProcess_ASWrite/ns3:MainProcessOutput/ns3:Status= 0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Confirm</pd:from>
+        <pd:to>SubProcess_LogRequest-Success</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CatchAll_Exception</pd:from>
+        <pd:to>LogException_Process</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogException_Process</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CallProcess_ASWrite</pd:from>
+        <pd:to>SubProcess_LogRequest-Fail</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SubProcess_LogRequest-Success</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SubProcess_LogRequest-Fail</pd:from>
+        <pd:to>Confirm_Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>CallProcess_ASWrite</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Confirm_Error</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

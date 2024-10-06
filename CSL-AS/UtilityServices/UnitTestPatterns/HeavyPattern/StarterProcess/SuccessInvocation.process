@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:Util="java://com.eai.cuf.Util" xmlns:ns="http://www.westernunion.com/eai/common/cuf.xsd" xmlns:ns3="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions">
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" schemaLocation="/UtilityServices/SharedResources/SchemaDefinitions/Common/RequestHeader.xsd"/>
+    <pd:name>UtilityServices/UnitTestPatterns/HeavyPattern/StarterProcess/SuccessInvocation.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>664</pd:endX>
+    <pd:endY>61</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1359052285906</pd:targetNamespace>
+    <pd:activity name="Invoke Heavy Pattern Main Process">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>416</pd:x>
+        <pd:y>77</pd:y>
+        <config>
+            <processName>/UtilityServices/Patterns/HeavyPattern/MainProcess.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns:MainProcessInput>
+                <xsl:copy-of select="$Map-Input-Data/Input/ns2:Header"/>
+                <ns:AuditInputMsg>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/COE/Auditing/GLB_InputPayload"/>
+                </ns:AuditInputMsg>
+                <ns:AuditOutputMsg>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/COE/Auditing/GLB_OutputPayload"/>
+                </ns:AuditOutputMsg>
+                <ns:Input>
+                    <xsl:copy-of select="$Map-Input-Data/Input/ns2:Header"/>
+                </ns:Input>
+                <ns:ActualProcess>
+                    <xsl:value-of select="&quot;/UtilityServices/UnitTestPatterns/HeavyPattern/SubProcess/HandleSuccessInvocation.process&quot;"/>
+                </ns:ActualProcess>
+            </ns:MainProcessInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map Input Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>284</pd:x>
+        <pd:y>62</pd:y>
+        <config>
+            <element>
+                <xsd:element name="Input">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="ns2:Header"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <Input>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/COE/GLB_ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Domain"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="&quot;Success&quot;"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="Util:getGUID()"/>
+                    </ns2:TransactionID>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="Util:encryptPassword(Util:getGUID())"/>
+                    </ns2:InterfaceID>
+                    <ns2:Message>
+                        <xsl:value-of select="&quot;This is an example of input schema payload.&quot;"/>
+                    </ns2:Message>
+                </ns2:Header>
+            </Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log Output">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>539</pd:x>
+        <pd:y>61</pd:y>
+        <config>
+            <processName>/UtilityServices/Logging/LogMessage.process</processName>
+        </config>
+        <pd:inputBindings>
+            <Input>
+                <ns3:LogRequest>
+                    <xsl:copy-of select="$Map-Input-Data/Input/ns2:Header"/>
+                    <Audit>
+                        <xsl:value-of select="false()"/>
+                    </Audit>
+                </ns3:LogRequest>
+                <ProcessName>
+                    <xsl:value-of select="&quot;SuccessInvocation&quot;"/>
+                </ProcessName>
+                <LogDateTime>
+                    <xsl:value-of select="current-dateTime()"/>
+                </LogDateTime>
+                <Severity>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/COE/LogLevels/GLB_INFO"/>
+                </Severity>
+                <CLELogging>
+                    <xsl:value-of select="false()"/>
+                </CLELogging>
+                <Message>
+                    <xsl:value-of select="&quot;This is the output payload from HeavyPattern.&quot;"/>
+                </Message>
+                <ns:Input>
+                    <xsl:copy-of select="$Invoke-Heavy-Pattern-Main-Process/ns:MainProcessOutput"/>
+                </ns:Input>
+            </Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Map Input Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Invoke Heavy Pattern Main Process</pd:from>
+        <pd:to>Log Output</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Input Data</pd:from>
+        <pd:to>Invoke Heavy Pattern Main Process</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log Output</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

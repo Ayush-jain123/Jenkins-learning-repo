@@ -1,0 +1,9 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<Input>
+	<host>10.23.10.254</host>
+	<port>22</port>
+	<userName>username</userName>
+	<password>password</password>
+	<privateKeyLocation/>
+	<privateKeyPassword/>
+</Input>

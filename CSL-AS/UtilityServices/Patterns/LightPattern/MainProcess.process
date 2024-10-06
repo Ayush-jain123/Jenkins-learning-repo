@@ -1,0 +1,734 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/pe/EngineTypes" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:Util="java://com.eai.cuf.Util" xmlns:ns="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx2="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:pfx="http://www.westernunion.com/eai/common/cuf.xsd">
+    <xsd:import namespace="http://www.westernunion.com/eai/common/cuf.xsd" schemaLocation="/UtilityServices/SharedResources/SchemaDefinitions/Common/CUF.xsd"/>
+    <pd:name>UtilityServices/Patterns/LightPattern/MainProcess.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx:MainProcessInput"/>
+    <pd:startX>116</pd:startX>
+    <pd:startY>231</pd:startY>
+    <pd:returnBindings>
+        <xsl:choose>
+            <xsl:when test="exists($Log-Exception)">
+                <pfx:MainProcessOutput>
+                    <pfx:Output>
+                        <xsl:copy-of select="$Log-Exception/pfx:ErrorSchema"/>
+                    </pfx:Output>
+                    <pfx:Status>
+                        <xsl:value-of select="1"/>
+                    </pfx:Status>
+                </pfx:MainProcessOutput>
+            </xsl:when>
+            <xsl:when test="exists($Log-Error)">
+                <pfx:MainProcessOutput>
+                    <pfx:Output>
+                        <xsl:copy-of select="$Log-Error/pfx:ErrorSchema"/>
+                    </pfx:Output>
+                    <pfx:Status>
+                        <xsl:value-of select="1"/>
+                    </pfx:Status>
+                </pfx:MainProcessOutput>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:copy-of select="$Call-Actual-Process/pfx:MainProcessOutput"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:MainProcessOutput"/>
+    <pd:endX>842</pd:endX>
+    <pd:endY>229</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables>
+        <InputSchema>
+            <xsd:element name="transaction">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="startTime" type="xsd:long"/>
+                        <xsd:element name="transactionId" type="xsd:string"/>
+                        <xsd:element name="objectId" type="xsd:string"/>
+                        <xsd:element name="inputXML" type="xsd:string" minOccurs="0"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </InputSchema>
+    </pd:processVariables>
+    <pd:targetNamespace>http://xmlns.example.com/1358267251616</pd:targetNamespace>
+    <pd:group name="Catch Exception">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>209</pd:x>
+        <pd:y>1</pd:y>
+        <pd:width>544</pd:width>
+        <pd:height>437</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>simpleGroup</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>Assign</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ShutDown</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Assign</pd:from>
+            <pd:to>StartUp</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>StartUp</pd:from>
+            <pd:to>Audit Start</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Audit Start</pd:from>
+            <pd:to>Transaction</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Transaction</pd:from>
+            <pd:to>Audit End</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Transaction</pd:from>
+            <pd:to>Log Error</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Audit End</pd:from>
+            <pd:to>ShutDown</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Log Error</pd:from>
+            <pd:to>Audit End</pd:to>
+            <pd:lineType>One Bend</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="Assign">
+            <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+            <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+            <pd:x>298</pd:x>
+            <pd:y>228</pd:y>
+            <config>
+                <variableName>InputSchema</variableName>
+            </config>
+            <pd:inputBindings>
+                <transaction>
+                    <startTime>
+                        <xsl:value-of select="number(tib:timestamp())"/>
+                    </startTime>
+                    <transactionId>
+                        <xsl:value-of select="if (string-length(tib:trim($Start/pfx:MainProcessInput/ns:Header/ns:TransactionID)) > 0) then &#xA;$Start/pfx:MainProcessInput/ns:Header/ns:TransactionID else Util:getGUID()"/>
+                    </transactionId>
+                    <objectId>
+                        <xsl:value-of select="if (string-length(tib:trim($Start/pfx:MainProcessInput/ns:Header/ns:CorrelationID)) > 0) then &#xA;$Start/pfx:MainProcessInput/ns:Header/ns:CorrelationID else &quot;-1&quot;"/>
+                    </objectId>
+                    <xsl:if test="$Start/pfx:MainProcessInput/pfx:AuditInputMsg = &quot;true&quot;">
+                        <inputXML>
+                            <xsl:value-of select="tib:if-absent(tib:render-xml($Start/pfx:MainProcessInput/pfx:Input/*, false(), true()), &#xA;$Start/pfx:MainProcessInput/ns:Header/ns:Transaction)"/>
+                        </inputXML>
+                    </xsl:if>
+                </transaction>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Audit Start">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>415</pd:x>
+            <pd:y>68</pd:y>
+            <config>
+                <processName>/UtilityServices/Auditing/AuditStart.process</processName>
+            </config>
+            <pd:inputBindings>
+                <pfx2:LogRequest>
+                    <ns:Header>
+                        <ns:ApplicationID>
+                            <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:ApplicationID"/>
+                        </ns:ApplicationID>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:ComponentName">
+                            <ns:ComponentName>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:ComponentName"/>
+                            </ns:ComponentName>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:Hostname">
+                            <ns:Hostname>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:Hostname"/>
+                            </ns:Hostname>
+                        </xsl:if>
+                        <ns:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns:Timestamp>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:TransactionDomain">
+                            <ns:TransactionDomain>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:TransactionDomain"/>
+                            </ns:TransactionDomain>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:TransactionType">
+                            <ns:TransactionType>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:TransactionType"/>
+                            </ns:TransactionType>
+                        </xsl:if>
+                        <ns:TransactionID>
+                            <xsl:value-of select="$InputSchema/transaction/transactionId"/>
+                        </ns:TransactionID>
+                        <xsl:if test="if ($InputSchema/transaction/objectId !=-1) then $InputSchema/transaction/objectId else &#xA;$Start/pfx:MainProcessInput/ns:Header/ns:CorrelationID">
+                            <ns:CorrelationID>
+                                <xsl:value-of select="if ($InputSchema/transaction/objectId !=-1) then $InputSchema/transaction/objectId else &#xA;$Start/pfx:MainProcessInput/ns:Header/ns:CorrelationID"/>
+                            </ns:CorrelationID>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:InterfaceID">
+                            <ns:InterfaceID>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:InterfaceID"/>
+                            </ns:InterfaceID>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:Filename">
+                            <ns:Filename>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:Filename"/>
+                            </ns:Filename>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:Message">
+                            <ns:Message>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:Message"/>
+                            </ns:Message>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:RenderID">
+                            <ns:RenderID>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:RenderID"/>
+                            </ns:RenderID>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:DataEncoding">
+                            <ns:DataEncoding>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:DataEncoding"/>
+                            </ns:DataEncoding>
+                        </xsl:if>
+                        <xsl:if test="$InputSchema/transaction/inputXML">
+                            <ns:Transaction>
+                                <xsl:value-of select="$InputSchema/transaction/inputXML"/>
+                            </ns:Transaction>
+                        </xsl:if>
+                        <xsl:copy-of select="$Start/pfx:MainProcessInput/ns:Header/ns:AltKey"/>
+                    </ns:Header>
+                    <Audit>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/COE/Auditing/GLB_AuditStart"/>
+                    </Audit>
+                </pfx2:LogRequest>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="StartUp">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>299</pd:x>
+            <pd:y>68</pd:y>
+            <config>
+                <processName>/UtilityServices/Initialization/StartUp.process</processName>
+            </config>
+            <pd:inputBindings>
+                <Input>
+                    <ComponentName>
+                        <xsl:value-of select="tib:if-absent($Start/pfx:MainProcessInput/ns:Header/ns:ComponentName, &#xA;$_globalVariables/ns1:GlobalVariables/Deployment)"/>
+                    </ComponentName>
+                    <ApplicationID>
+                        <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:ApplicationID"/>
+                    </ApplicationID>
+                    <TransactionID>
+                        <xsl:value-of select="$InputSchema/transaction/transactionId"/>
+                    </TransactionID>
+                    <ObjectID>
+                        <xsl:value-of select="$InputSchema/transaction/objectId"/>
+                    </ObjectID>
+                </Input>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Audit End">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>571</pd:x>
+            <pd:y>228</pd:y>
+            <config>
+                <processName>/UtilityServices/Auditing/AuditEnd.process</processName>
+            </config>
+            <pd:inputBindings>
+                <pfx2:LogRequest>
+                    <ns:Header>
+                        <ns:ApplicationID>
+                            <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:ApplicationID"/>
+                        </ns:ApplicationID>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:ComponentName">
+                            <ns:ComponentName>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:ComponentName"/>
+                            </ns:ComponentName>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:Hostname">
+                            <ns:Hostname>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:Hostname"/>
+                            </ns:Hostname>
+                        </xsl:if>
+                        <ns:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns:Timestamp>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:TransactionDomain">
+                            <ns:TransactionDomain>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:TransactionDomain"/>
+                            </ns:TransactionDomain>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:TransactionType">
+                            <ns:TransactionType>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:TransactionType"/>
+                            </ns:TransactionType>
+                        </xsl:if>
+                        <ns:TransactionID>
+                            <xsl:value-of select="$InputSchema/transaction/transactionId"/>
+                        </ns:TransactionID>
+                        <xsl:if test="if ($InputSchema/transaction/objectId !=-1) then $InputSchema/transaction/objectId else &#xA;$Start/pfx:MainProcessInput/ns:Header/ns:CorrelationID">
+                            <ns:CorrelationID>
+                                <xsl:value-of select="if ($InputSchema/transaction/objectId !=-1) then $InputSchema/transaction/objectId else &#xA;$Start/pfx:MainProcessInput/ns:Header/ns:CorrelationID"/>
+                            </ns:CorrelationID>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:InterfaceID">
+                            <ns:InterfaceID>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:InterfaceID"/>
+                            </ns:InterfaceID>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:Filename">
+                            <ns:Filename>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:Filename"/>
+                            </ns:Filename>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:Message">
+                            <ns:Message>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:Message"/>
+                            </ns:Message>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:RenderID">
+                            <ns:RenderID>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:RenderID"/>
+                            </ns:RenderID>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:DataEncoding">
+                            <ns:DataEncoding>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:DataEncoding"/>
+                            </ns:DataEncoding>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/pfx:AuditOutputMsg = &quot;true&quot;">
+                            <xsl:choose>
+                                <xsl:when test="exists($_error)">
+                                    <ns:Transaction>
+                                        <xsl:value-of select="tib:render-xml($_error/ns2:ErrorReport, false(), true())"/>
+                                    </ns:Transaction>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <ns:Transaction>
+                                        <xsl:value-of select="tib:render-xml($Call-Actual-Process/pfx:MainProcessOutput/pfx:Output/*, false(), true())"/>
+                                    </ns:Transaction>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:if>
+                        <xsl:copy-of select="$Start/pfx:MainProcessInput/ns:Header/ns:AltKey"/>
+                    </ns:Header>
+                    <TimeDuration>
+                        <xsl:value-of select="number(tib:timestamp()) - $InputSchema/transaction/startTime"/>
+                    </TimeDuration>
+                    <xsl:choose>
+                        <xsl:when test="exists($_error)">
+                            <Status>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/COE/Messages/OverallStatus/GLB_Error"/>
+                            </Status>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <Status>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/COE/Messages/OverallStatus/GLB_Success"/>
+                            </Status>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <Audit>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/COE/Auditing/GLB_AuditEnd"/>
+                    </Audit>
+                </pfx2:LogRequest>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:group name="Transaction">
+            <pd:type>com.tibco.pe.core.TransactionGroup</pd:type>
+            <pd:resourceType>ae.process.group</pd:resourceType>
+            <pd:x>355</pd:x>
+            <pd:y>142</pd:y>
+            <pd:width>133</pd:width>
+            <pd:height>155</pd:height>
+            <pd:collapsedWidth>57</pd:collapsedWidth>
+            <pd:collapsedHeight>70</pd:collapsedHeight>
+            <pd:groupVariables/>
+            <pd:joinToggle>inherit</pd:joinToggle>
+            <config>
+                <pd:groupType>transactionGroup</pd:groupType>
+                <pd:serializable>false</pd:serializable>
+                <pd:transactionType>JDBCTransaction</pd:transactionType>
+                <pd:includeCheckpoint>false</pd:includeCheckpoint>
+            </config>
+            <pd:inputBindings/>
+            <pd:expanded>true</pd:expanded>
+            <pd:transition>
+                <pd:from>start</pd:from>
+                <pd:to>Call Actual Process</pd:to>
+                <pd:lineType>Default</pd:lineType>
+                <pd:lineColor>-16777216</pd:lineColor>
+                <pd:conditionType>always</pd:conditionType>
+            </pd:transition>
+            <pd:transition>
+                <pd:from>Call Actual Process</pd:from>
+                <pd:to>end</pd:to>
+                <pd:lineType>Default</pd:lineType>
+                <pd:lineColor>-16777216</pd:lineColor>
+                <pd:conditionType>always</pd:conditionType>
+            </pd:transition>
+            <pd:activity name="Call Actual Process">
+                <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+                <pd:resourceType>ae.process.subprocess</pd:resourceType>
+                <pd:x>420</pd:x>
+                <pd:y>233</pd:y>
+                <config>
+                    <processName>/UtilityServices/Patterns/LightPattern/BusinessProcess.process</processName>
+                    <processNameXPath>$Start/pfx:MainProcessInput/pfx:ActualProcess</processNameXPath>
+                </config>
+                <pd:inputBindings>
+                    <Data>
+                        <pfx:Input>
+                            <xsl:copy-of select="$Start/pfx:MainProcessInput/pfx:Input/*"/>
+                        </pfx:Input>
+                    </Data>
+                </pd:inputBindings>
+            </pd:activity>
+        </pd:group>
+        <pd:activity name="ShutDown">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>666</pd:x>
+            <pd:y>229</pd:y>
+            <config>
+                <processName>/UtilityServices/Initialization/ShutDown.process</processName>
+            </config>
+            <pd:inputBindings>
+                <Input>
+                    <ProcessID>
+                        <xsl:value-of select="$_processContext/ns2:ProcessContext/ProcessId"/>
+                    </ProcessID>
+                </Input>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Log Error">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>423</pd:x>
+            <pd:y>376</pd:y>
+            <config>
+                <processName>/UtilityServices/Logging/LogException.process</processName>
+            </config>
+            <pd:inputBindings>
+                <pfx:ErrorSchema>
+                    <pfx:ProcessName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </pfx:ProcessName>
+                    <pfx:CLELogging>
+                        <xsl:value-of select="true()"/>
+                    </pfx:CLELogging>
+                    <pfx:ExceptionDateTime>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </pfx:ExceptionDateTime>
+                    <ns:Header>
+                        <ns:ApplicationID>
+                            <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:ApplicationID"/>
+                        </ns:ApplicationID>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:ComponentName">
+                            <ns:ComponentName>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:ComponentName"/>
+                            </ns:ComponentName>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:Hostname">
+                            <ns:Hostname>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:Hostname"/>
+                            </ns:Hostname>
+                        </xsl:if>
+                        <ns:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns:Timestamp>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:TransactionDomain">
+                            <ns:TransactionDomain>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:TransactionDomain"/>
+                            </ns:TransactionDomain>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:TransactionType">
+                            <ns:TransactionType>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:TransactionType"/>
+                            </ns:TransactionType>
+                        </xsl:if>
+                        <ns:TransactionID>
+                            <xsl:value-of select="$InputSchema/transaction/transactionId"/>
+                        </ns:TransactionID>
+                        <xsl:if test="if ($InputSchema/transaction/objectId !=-1) then $InputSchema/transaction/objectId else &#xA;$Start/pfx:MainProcessInput/ns:Header/ns:CorrelationID">
+                            <ns:CorrelationID>
+                                <xsl:value-of select="if ($InputSchema/transaction/objectId !=-1) then $InputSchema/transaction/objectId else &#xA;$Start/pfx:MainProcessInput/ns:Header/ns:CorrelationID"/>
+                            </ns:CorrelationID>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:InterfaceID">
+                            <ns:InterfaceID>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:InterfaceID"/>
+                            </ns:InterfaceID>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:Filename">
+                            <ns:Filename>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:Filename"/>
+                            </ns:Filename>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:Message">
+                            <ns:Message>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:Message"/>
+                            </ns:Message>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:RenderID">
+                            <ns:RenderID>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:RenderID"/>
+                            </ns:RenderID>
+                        </xsl:if>
+                        <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:DataEncoding">
+                            <ns:DataEncoding>
+                                <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:DataEncoding"/>
+                            </ns:DataEncoding>
+                        </xsl:if>
+                        <xsl:if test="$InputSchema/transaction/inputXML">
+                            <ns:Transaction>
+                                <xsl:value-of select="$InputSchema/transaction/inputXML"/>
+                            </ns:Transaction>
+                        </xsl:if>
+                        <xsl:copy-of select="$Start/pfx:MainProcessInput/ns:Header/ns:AltKey"/>
+                    </ns:Header>
+                    <pfx:ErrorReport>
+                        <pfx:StackTrace>
+                            <xsl:value-of select="$_error/ns2:ErrorReport/StackTrace"/>
+                        </pfx:StackTrace>
+                        <pfx:Msg>
+                            <xsl:value-of select="$_error/ns2:ErrorReport/Msg"/>
+                        </pfx:Msg>
+                        <pfx:FullClass>
+                            <xsl:value-of select="$_error/ns2:ErrorReport/FullClass"/>
+                        </pfx:FullClass>
+                        <pfx:Class>
+                            <xsl:value-of select="$_error/ns2:ErrorReport/Class"/>
+                        </pfx:Class>
+                        <pfx:ProcessStack>
+                            <xsl:value-of select="$_error/ns2:ErrorReport/ProcessStack"/>
+                        </pfx:ProcessStack>
+                        <xsl:if test="$_error/ns2:ErrorReport/MsgCode">
+                            <pfx:MsgCode>
+                                <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                            </pfx:MsgCode>
+                        </xsl:if>
+                        <pfx:Data>
+                            <xsl:copy-of select="$_error/ns2:ErrorReport/Data/*"/>
+                        </pfx:Data>
+                    </pfx:ErrorReport>
+                    <pfx:ErrorMessage>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/Msg"/>
+                    </pfx:ErrorMessage>
+                </pfx:ErrorSchema>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="Log Exception">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>841</pd:x>
+        <pd:y>376</pd:y>
+        <config>
+            <processName>/UtilityServices/Logging/LogException.process</processName>
+        </config>
+        <pd:inputBindings>
+            <pfx:ErrorSchema>
+                <pfx:ProcessName>
+                    <xsl:value-of select="BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId)"/>
+                </pfx:ProcessName>
+                <pfx:CLELogging>
+                    <xsl:value-of select="false()"/>
+                </pfx:CLELogging>
+                <pfx:ExceptionDateTime>
+                    <xsl:value-of select="current-dateTime()"/>
+                </pfx:ExceptionDateTime>
+                <ns:Header>
+                    <ns:ApplicationID>
+                        <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:ApplicationID"/>
+                    </ns:ApplicationID>
+                    <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:ComponentName">
+                        <ns:ComponentName>
+                            <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:ComponentName"/>
+                        </ns:ComponentName>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:Hostname">
+                        <ns:Hostname>
+                            <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:Hostname"/>
+                        </ns:Hostname>
+                    </xsl:if>
+                    <ns:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns:Timestamp>
+                    <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:TransactionDomain">
+                        <ns:TransactionDomain>
+                            <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:TransactionDomain"/>
+                        </ns:TransactionDomain>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:TransactionType">
+                        <ns:TransactionType>
+                            <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:TransactionType"/>
+                        </ns:TransactionType>
+                    </xsl:if>
+                    <ns:TransactionID>
+                        <xsl:value-of select="$InputSchema/transaction/transactionId"/>
+                    </ns:TransactionID>
+                    <xsl:if test="if ($InputSchema/transaction/objectId !=-1) then $InputSchema/transaction/objectId else &#xA;$Start/pfx:MainProcessInput/ns:Header/ns:CorrelationID">
+                        <ns:CorrelationID>
+                            <xsl:value-of select="if ($InputSchema/transaction/objectId !=-1) then $InputSchema/transaction/objectId else &#xA;$Start/pfx:MainProcessInput/ns:Header/ns:CorrelationID"/>
+                        </ns:CorrelationID>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:InterfaceID">
+                        <ns:InterfaceID>
+                            <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:InterfaceID"/>
+                        </ns:InterfaceID>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:Filename">
+                        <ns:Filename>
+                            <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:Filename"/>
+                        </ns:Filename>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:Message">
+                        <ns:Message>
+                            <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:Message"/>
+                        </ns:Message>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:RenderID">
+                        <ns:RenderID>
+                            <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:RenderID"/>
+                        </ns:RenderID>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:DataEncoding">
+                        <ns:DataEncoding>
+                            <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:DataEncoding"/>
+                        </ns:DataEncoding>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx:MainProcessInput/ns:Header/ns:Transaction">
+                        <ns:Transaction>
+                            <xsl:value-of select="$Start/pfx:MainProcessInput/ns:Header/ns:Transaction"/>
+                        </ns:Transaction>
+                    </xsl:if>
+                    <xsl:copy-of select="$Start/pfx:MainProcessInput/ns:Header/ns:AltKey"/>
+                </ns:Header>
+                <pfx:ErrorReport>
+                    <pfx:StackTrace>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/StackTrace"/>
+                    </pfx:StackTrace>
+                    <pfx:Msg>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/Msg"/>
+                    </pfx:Msg>
+                    <pfx:FullClass>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/FullClass"/>
+                    </pfx:FullClass>
+                    <pfx:Class>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/Class"/>
+                    </pfx:Class>
+                    <pfx:ProcessStack>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/ProcessStack"/>
+                    </pfx:ProcessStack>
+                    <xsl:if test="$_error/ns2:ErrorReport/MsgCode">
+                        <pfx:MsgCode>
+                            <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                        </pfx:MsgCode>
+                    </xsl:if>
+                    <pfx:Data>
+                        <xsl:copy-of select="$_error/ns2:ErrorReport/Data/*"/>
+                    </pfx:Data>
+                </pfx:ErrorReport>
+                <pfx:ErrorMessage>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/Msg"/>
+                </pfx:ErrorMessage>
+            </pfx:ErrorSchema>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Stop Engine">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>970</pd:x>
+        <pd:y>227</pd:y>
+        <config>
+            <processName>/UtilityServices/Initialization/KillProcess.process</processName>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Catch Exception</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch Exception</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch Exception</pd:from>
+        <pd:to>Log Exception</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log Exception</pd:from>
+        <pd:to>Stop Engine</pd:to>
+        <pd:xpathDescription>Stop Engine</pd:xpathDescription>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$_globalVariables/ns1:GlobalVariables/COE/GLB_StopEngineOnError = "true"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Stop Engine</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log Exception</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

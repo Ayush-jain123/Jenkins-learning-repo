@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BWSharedResource>
+    <name>ExceptionUtilityJMSConnection</name>
+    <resourceType>ae.shared.JMSConnectionKey</resourceType>
+    <config>
+        <NamingEnvironment>
+            <UseJNDI>true</UseJNDI>
+            <ProviderURL>tcp://localhost:7222</ProviderURL>
+            <NamingURL>%%COE/JMS/ConnectionDetails/MIG_JNDIContextUrl%%</NamingURL>
+            <NamingInitialContextFactory>com.tibco.tibjms.naming.TibjmsInitialContextFactory</NamingInitialContextFactory>
+            <TopicFactoryName>TopicConnectionFactory</TopicFactoryName>
+            <QueueFactoryName>QueueConnectionFactory</QueueFactoryName>
+            <NamingPrincipal>%%COE/JMS/ConnectionDetails/MIG_JNDIUserName%%</NamingPrincipal>
+            <NamingCredential>%%COE/JMS/ConnectionDetails/MIG_JNDIPassword%%</NamingCredential>
+        </NamingEnvironment>
+        <ConnectionAttributes>
+            <username>%%COE/JMS/ConnectionDetails/MIG_UserName%%</username>
+            <password>%%COE/JMS/ConnectionDetails/MIG_Password%%</password>
+            <clientID>%%COE/JMS/ConnectionDetails/GLB_ClientID%%</clientID>
+            <autoGenClientID>%%COE/JMS/ConnectionDetails/GLB_AutoClientID%%</autoGenClientID>
+        </ConnectionAttributes>
+        <UseXACF>false</UseXACF>
+    </config>
+</BWSharedResource>

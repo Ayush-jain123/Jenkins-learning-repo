@@ -1,0 +1,29 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<repository xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xmlns = "http://www.tibco.com/xmlns/repo/types/2002">
+	<globalVariables>
+		<globalVariable>
+			<name>ASReadyStateCheckTimeout</name>
+			<value>5000</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Integer</type>
+			<modTime>1505888885622</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>PUTRetry</name>
+			<value>3</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Integer</type>
+			<modTime>1505370695057</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>SpaceReadyState</name>
+			<value>READY</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1505370522406</modTime>
+		</globalVariable>
+	</globalVariables>
+</repository>

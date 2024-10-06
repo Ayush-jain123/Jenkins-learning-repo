@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:Util="java://com.eai.cuf.Util" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <pd:name>UtilityServices/Initialization/StartUp.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="Input">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="ComponentName" type="xsd:string"/>
+                    <xsd:element name="ApplicationID" type="xsd:string"/>
+                    <xsd:element name="TransactionID" type="xsd:string"/>
+                    <xsd:element name="ObjectID" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>118</pd:startX>
+    <pd:startY>63</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>530</pd:endX>
+    <pd:endY>201</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables>
+        <InitializeSchema>
+            <xsd:element name="Input">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ApplicationInitialized" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </InitializeSchema>
+        <PropertySchema>
+            <xsd:element name="Input">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ProcessName" type="xsd:string"/>
+                        <xsd:element name="ApplicationID" type="xsd:string"/>
+                        <xsd:element name="TransactionID" type="xsd:string"/>
+                        <xsd:element name="ObjectID" type="xsd:string"/>
+                        <xsd:element name="RetryCounter" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </PropertySchema>
+    </pd:processVariables>
+    <pd:targetNamespace>http://xmlns.example.com/1358267778387</pd:targetNamespace>
+    <pd:activity name="Is Initialized">
+        <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+        <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+        <pd:x>234</pd:x>
+        <pd:y>62</pd:y>
+        <config>
+            <variableName>InitializeSchema</variableName>
+        </config>
+        <pd:inputBindings>
+            <Input>
+                <ApplicationInitialized>
+                    <xsl:value-of select="Util:getProperty($Start/Input/ComponentName, &quot;INITIALIZED&quot;)"/>
+                </ApplicationInitialized>
+            </Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Setting Properties">
+        <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+        <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+        <pd:x>386</pd:x>
+        <pd:y>63</pd:y>
+        <config>
+            <variableName>PropertySchema</variableName>
+        </config>
+        <pd:inputBindings>
+            <Input>
+                <ProcessName>
+                    <xsl:value-of select="Util:setProcessName($_processContext/ns1:ProcessContext/ProcessId, &#xA;$Start/Input/ComponentName)"/>
+                </ProcessName>
+                <ApplicationID>
+                    <xsl:value-of select="Util:setProperty($_processContext/ns1:ProcessContext/ProcessId, &quot;APPLICATIONID&quot;, &#xA;$Start/Input/ApplicationID)"/>
+                </ApplicationID>
+                <TransactionID>
+                    <xsl:value-of select="Util:setProperty($_processContext/ns1:ProcessContext/ProcessId, &quot;TRANSACTIONID&quot;, &#xA;$Start/Input/TransactionID)"/>
+                </TransactionID>
+                <ObjectID>
+                    <xsl:value-of select="Util:setProperty($_processContext/ns1:ProcessContext/ProcessId, &quot;OBJECTID&quot;, $Start/Input/ObjectID)"/>
+                </ObjectID>
+                <RetryCounter>
+                    <xsl:value-of select="Util:setProperty($_processContext/ns1:ProcessContext/ProcessId, &quot;RETRYCOUNTER&quot;, 0)"/>
+                </RetryCounter>
+            </Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Initializing">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>236</pd:x>
+        <pd:y>198</pd:y>
+        <config>
+            <element>
+                <xsd:element name="Data">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Initialized" type="xsd:boolean"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <Data>
+                <Initialized>
+                    <xsl:value-of select="Util:loadProps($Start/Input/ComponentName, &quot;&quot;, &quot;&quot;, &quot;%%&quot;)"/>
+                </Initialized>
+            </Data>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="User Exit">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>526</pd:x>
+        <pd:y>62</pd:y>
+        <config>
+            <processName>/BusinessProcesses/UserExit/StartUp.process</processName>
+        </config>
+        <pd:inputBindings>
+            <xsl:copy-of select="$Start/Input"/>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Is Initialized</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Is Initialized</pd:from>
+        <pd:to>Setting Properties</pd:to>
+        <pd:xpathDescription>Initialized</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$InitializeSchema/Input/ApplicationInitialized = "true"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Is Initialized</pd:from>
+        <pd:to>Initializing</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Initializing</pd:from>
+        <pd:to>Setting Properties</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Setting Properties</pd:from>
+        <pd:to>User Exit</pd:to>
+        <pd:xpathDescription>Initialized</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Initializing/Data/Initialized = "true"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>User Exit</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Setting Properties</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

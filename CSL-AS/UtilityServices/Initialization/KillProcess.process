@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <pd:name>UtilityServices/Initialization/KillProcess.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>450</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1358405093973</pd:targetNamespace>
+    <pd:activity name="User Exit">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>258</pd:x>
+        <pd:y>63</pd:y>
+        <config>
+            <processName>/BusinessProcesses/UserExit/KillProcess.process</processName>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Stop Engine">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>354</pd:x>
+        <pd:y>63</pd:y>
+        <config>
+            <fileName>KillProcessStopEngine</fileName>
+            <packageName>UtilityServices.Initialization.KillProcess</packageName>
+            <fullsource>package UtilityServices.Initialization.KillProcess;
+
+import java.util.*;
+import java.io.*;
+
+public class KillProcessStopEngine{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public KillProcessStopEngine() {
+	}
+
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+* Available Variables: DO NOT MODIFY *****/
+		System.exit(-1);
+	}
+}
+</fullsource>
+            <byteCode>
+                <class>
+                    <name>KillProcessStopEngine</name>
+                    <byteCode>yv66vgAAADMAFwoABAAOCgAPABAHABEHABIBAAY8aW5pdD4BAAMoKVYBAARDb2RlAQAPTGluZU51bWJlclRhYmxlAQAGaW52b2tlAQAKRXhjZXB0aW9ucwcAEwEAClNvdXJjZUZpbGUBABpLaWxsUHJvY2Vzc1N0b3BFbmdpbmUuamF2YQwABQAGBwAUDAAVABYBAEBVdGlsaXR5U2VydmljZXMvSW5pdGlhbGl6YXRpb24vS2lsbFByb2Nlc3MvS2lsbFByb2Nlc3NTdG9wRW5naW5lAQAQamF2YS9sYW5nL09iamVjdAEAE2phdmEvbGFuZy9FeGNlcHRpb24BABBqYXZhL2xhbmcvU3lzdGVtAQAEZXhpdAEABChJKVYAIQADAAQAAAAAAAIAAQAFAAYAAQAHAAAAIQABAAEAAAAFKrcAAbEAAAABAAgAAAAKAAIAAAAJAAQACgABAAkABgACAAcAAAAhAAEAAQAAAAUCuAACsQAAAAEACAAAAAoAAgAAAA8ABAAQAAoAAAAEAAEACwABAAwAAAACAA0=</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>User Exit</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>User Exit</pd:from>
+        <pd:to>Stop Engine</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Stop Engine</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>
